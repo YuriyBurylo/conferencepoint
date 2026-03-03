@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  line-height: 1,5;
+  font-size: 16px;
+  font-weight: 400;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+header, footer, nav, aside {
+  display: block;
+}
+
+ul li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+

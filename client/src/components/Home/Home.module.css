@@ -1,0 +1,11 @@
+.home {
+    min-height: 87vh;
+    place-items: center;
+    place-content: center;
+}
+
+.heading {
+    margin-top: 150px;
+    text-align: center;
+}
+

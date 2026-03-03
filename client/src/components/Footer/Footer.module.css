@@ -1,0 +1,48 @@
+.footer {
+    text-align: center;
+}
+
+.socials {
+    background-color: #3F72AF;
+    padding: 8px;
+}
+
+.socials a {
+    color: #DBE2EF;
+}
+
+.socials li {
+    transition: all .2s .1s ease-out;
+}
+
+.socials li:hover {
+    transform: scale(1.2);
+}
+
+.socials a:active {
+    color: goldenrod;
+}
+
+.socials ul {
+    display: flex;
+    justify-content: space-around;
+}
+
+.contacts {
+    background-color: #112D4E;
+    color: #DBE2EF;
+    padding: 8px;
+
+}
+
+.contacts p {
+    display: inline-block;
+    margin: 0 6px;
+    font-size: 0.9rem;
+}
+
+.contacts h5 {
+    font-weight: 400;
+    color: #3F72AF;
+    margin-top: 3px;
+}
