@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styles from './Conferences.module.css';
+import styles from './NewConferences.module.css';
 import { fetchNewConferences, fetchNewConferenceMaterials } from '../../../http/conferenceAPI';
 
 
-function Conferences() {
+function NewConferences() {
     let [conferenceList, setConferenceList] = useState([]);
     
     useEffect(()=> {
@@ -30,4 +30,4 @@ function Conferences() {
     )
 }
 
-export default Conferences;
+export default NewConferences;

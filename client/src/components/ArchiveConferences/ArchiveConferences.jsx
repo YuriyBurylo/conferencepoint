@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import styles from './Archives.module.css';
+import styles from './ArchiveConferences.module.css';
 import { fetchArchiveConferences, fetchArchiveConferenceMaterials } from '../../../http/conferenceAPI';
 import { Link } from 'react-router-dom';
 
-function Archives() {
+function ArchiveConferences() {
     let [archiveConferences, setArchiveConferences] = useState([]);
 
     useEffect(() => {
@@ -31,4 +31,4 @@ function Archives() {
     )
 }
 
-export default Archives;
+export default ArchiveConferences;

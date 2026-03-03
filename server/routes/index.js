@@ -1,10 +1,10 @@
 const Router = require('express');
 const router = new Router();
-const ConferenceRouter = require('./ConferenceRouter');
+const nextConferenceRouter = require('./nextConferenceRouter');
 const newConferencesRouter = require('./newConferencesRouter');
 const archiveConferencesRouter = require('./archiveConferencesRouter');
 
-router.use('/conference', ConferenceRouter)
+router.use('/nextconference', nextConferenceRouter);
 router.use('/newconferences', newConferencesRouter);
 router.use('/pastconferences', archiveConferencesRouter);
 

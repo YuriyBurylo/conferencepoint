@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import styles from './ConferenceDetails.module.css';
+import styles from './NewConferenceDetails.module.css';
 import ConferencePage from '../ConferencePage/ConferencePage';
 import { fetchNewConferenceById, fetchNewConferenceMaterials } from '../../../http/conferenceAPI';
 
-function ConferenceDetails() {
+function NewConferenceDetails() {
     const [conference, setConference] = useState({});
     const [loading, setLoading] = useState(true);
     const {id} = useParams();
@@ -35,4 +35,4 @@ function ConferenceDetails() {
     )
 }
 
-export default ConferenceDetails;
+export default NewConferenceDetails;

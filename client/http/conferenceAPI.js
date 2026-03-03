@@ -1,7 +1,7 @@
 import { $host } from './index';
 
 export const fetchNextConference = async () => {
-    const response = await $host.get('api/conference');
+    const response = await $host.get('api/nextconference');
     console.log(response);
     return response;
 };
