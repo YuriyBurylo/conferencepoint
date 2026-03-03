@@ -4,7 +4,8 @@ const archiveConferencesRouter = new Router();
 
 archiveConferencesRouter.post('/', archiveConferencesController.createConference);
 archiveConferencesRouter.get('/', archiveConferencesController.getConferences);
-archiveConferencesRouter.get('/:id', archiveConferencesController.getOneConference);
+archiveConferencesRouter.get('/:id', archiveConferencesController.getConferenceById);
+archiveConferencesRouter.get('/:id/materials', archiveConferencesController.getConferenceMaterials);
 archiveConferencesRouter.put('/', archiveConferencesController.updateConference);
 archiveConferencesRouter.delete('/:id', archiveConferencesController.deleteConference);
 

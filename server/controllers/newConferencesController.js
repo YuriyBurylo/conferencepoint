@@ -18,7 +18,13 @@ class NewConferencesController {
         res.json(conferences.rows);
     }
 
-    async getOneConference(req, res) {
+    async getConferenceById(req, res) {
+        const {id} = req.params;
+        const conference = await db.query('SELECT * FROM new_conferences WHERE conference_id = $1', [id]);
+        res.json(conference.rows[0]);
+    }
+
+    async getConferenceMaterials(req, res) {
         const { id } = req.params;
         console.log(id);
         const result = await db.query('SELECT leaflet FROM new_conferences WHERE conference_id = $1', [id]);

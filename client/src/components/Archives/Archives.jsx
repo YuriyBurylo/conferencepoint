@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Archives.module.css';
-import { fetchArchiveConferences, fetchArchiveConferenceMaterials} from '../../../http/conferenceAPI';
+import { fetchArchiveConferences, fetchArchiveConferenceMaterials } from '../../../http/conferenceAPI';
 import { Link } from 'react-router-dom';
 
 function Archives() {
@@ -15,7 +15,16 @@ function Archives() {
             <div>Archives</div>
             <ul>
                 {
-                   archiveConferences.map((item, index) => <li key={index}>Статус конференції: {item.conference_status}, назва конференції: {item.title}, місце проведення: {item.venue}, країна: {item.country}, час проведення: {item.timing}, учасники: {item.participants}<button onClick={() => fetchArchiveConferenceMaterials(item.conference_id)}>Download File</button></li>) 
+                   archiveConferences.map((item, index) => <li key={index}>
+                    Статус конференції: {item.conference_status},
+                    <Link to={`/pastconferences/${item.conference_id}`}>
+                    назва конференції: {item.title}, 
+                    </Link> 
+                    місце проведення: {item.venue}, 
+                    країна: {item.country}, 
+                    час проведення: {item.timing}, 
+                    учасники: {item.participants}
+                    <button onClick={() => fetchArchiveConferenceMaterials(item.conference_id)}>Download File</button></li>) 
                 }
             </ul>
         </div>

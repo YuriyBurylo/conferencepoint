@@ -17,7 +17,7 @@ function Conferences() {
                 {
                     conferenceList.map((item, index) => <li key={index}>
                         статус конференції: {item.conference_status}, 
-                        <Link to={`/conference/${item.conference_id}`}>
+                        <Link to={`/newconferences/${item.conference_id}`}>
                         назва:{item.title}
                         </Link>
                         місце проведення: {item.venue}, 

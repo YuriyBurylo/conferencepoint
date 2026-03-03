@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import styles from './ConferenceDetails.module.css';
+import styles from './ArchiveConferenceDetails.module.css';
 import ConferencePage from '../ConferencePage/ConferencePage';
-import { fetchNewConferenceById, fetchNewConferenceMaterials } from '../../../http/conferenceAPI';
+import { fetchArchiveConferenceById, fetchArchiveConferenceMaterials } from '../../../http/conferenceAPI';
 
-function ConferenceDetails() {
+function ArchiveConferenceDetails() {
     const [conference, setConference] = useState({});
     const [loading, setLoading] = useState(true);
     const {id} = useParams();
 
     useEffect(() => {
-        fetchNewConferenceById(id).then(response => {
+        fetchArchiveConferenceById(id).then(response => {
             setConference(response.data);
             setLoading(false);
         });
@@ -30,9 +30,10 @@ function ConferenceDetails() {
                 country = {conference.country}
                 venue = {conference.venue}
                 timing = {conference.timing} 
-                fetchMaterials={fetchNewConferenceMaterials}/>
+                fetchMaterials={fetchArchiveConferenceMaterials}/>
+
         </div>
     )
 }
 
-export default ConferenceDetails;
+export default ArchiveConferenceDetails;

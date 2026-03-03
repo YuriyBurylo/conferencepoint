@@ -1,14 +1,21 @@
 import { $host } from './index';
 
+export const fetchNextConference = async () => {
+    const response = await $host.get('api/conference');
+    console.log(response);
+    return response;
+};
+
 export const fetchNewConferences = async () => {
     const response = await $host.get('api/newconferences');
     return response;
 };
 
 export const fetchNewConferenceById = async (id) => {
-    const response = await $host.get(`api/conference/${id}`);
+    const response = await $host.get(`api/newconferences/${id}`);
     return response;
 };
+
 
 export const fetchArchiveConferences = async () => {
     const response = await $host.get('api/pastconferences');
@@ -16,14 +23,13 @@ export const fetchArchiveConferences = async () => {
     return response;
 };
 
-export const fetchNextConference = async () => {
-    const response = await $host.get('api/conference');
-    console.log(response);
+export const fetchArchiveConferenceById = async (id) => {
+    const response = await $host.get(`api/pastconferences/${id}`);
     return response;
 };
 
 export const fetchArchiveConferenceMaterials = async (id) => {
-    const response = await $host.get(`api/pastconferences/${id}`, {responseType: 'blob'});
+    const response = await $host.get(`api/pastconferences/${id}/materials`, {responseType: 'blob'});
     const blobResult = response.data;
     console.log(blobResult);
 
@@ -43,7 +49,7 @@ export const fetchArchiveConferenceMaterials = async (id) => {
 };
 
 export const fetchNewConferenceMaterials = async (id) => {
-    const response = await $host.get(`api/newconferences/${id}`, {responseType: 'blob'});
+    const response = await $host.get(`api/newconferences/${id}/materials`, {responseType: 'blob'});
     const blobResult = response.data;
     console.log(blobResult);
 
