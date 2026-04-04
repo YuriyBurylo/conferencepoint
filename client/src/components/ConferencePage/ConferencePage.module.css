@@ -1,4 +1,27 @@
-.home {
-    place-items: center;
-    place-content: center;
+.container {
+    text-align: center;
+}
+
+.status {
+    margin-top: 1rem;
+}
+
+.title {
+    margin-top: 1rem;
+}
+
+.country {
+    margin-top: 1rem;
+}
+
+.venue {
+    margin-top: 1rem;
+}
+
+.timing {
+    margin-top: 1rem;
+}
+
+.downloadButton {
+    margin-top: 1rem;
 }
