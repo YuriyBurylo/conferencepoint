@@ -9,9 +9,9 @@ function ConferencePage({id, status, title, country, venue, timing, fetchMateria
             <h1 className={styles.title}>{title}</h1>
             <p className={styles.country}>{country}</p>
             <p className={styles.venue}>{venue}</p>
-            <p className={styles.timing}>{timing}</p>
+            <p className={styles.timing}>{timing.slice(0, 10)}</p>
             <button className={styles.downloadButton} onClick={() => fetchMaterials(id)}>
-                Download Conference Leaflet
+                ІНФОРМАЦІЯ ПРО КОНФЕРЕНЦІЮ
             </button>
         </div>
     )

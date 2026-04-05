@@ -24,7 +24,7 @@ function ArchiveConferences() {
                     країна: {item.country}, 
                     час проведення: {item.timing}, 
                     учасники: {item.participants}
-                    <button onClick={() => fetchArchiveConferenceMaterials(item.conference_id)}>Download File</button></li>) 
+                    <button className={styles.downloadButton} onClick={() => fetchArchiveConferenceMaterials(item.conference_id)}>МАТЕРІАЛИ КОНФЕРЕНЦІЇ</button></li>) 
                 }
             </ul>
         </div>

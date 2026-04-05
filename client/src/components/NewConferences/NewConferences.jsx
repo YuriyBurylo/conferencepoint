@@ -23,7 +23,7 @@ function NewConferences() {
                         місце проведення: {item.venue}, 
                         країна: {item.country}, 
                         дата проведення: {item.timing} 
-                        <button onClick={() => fetchNewConferenceMaterials(item.conference_id)}>Download leaflet</button></li>)
+                        <button className={styles.downloadButton} onClick={() => fetchNewConferenceMaterials(item.conference_id)}>ІНФОРМАЦІЯ ПРО КОНФЕРЕНЦІЮ</button></li>)
                 }
             </ul>
         </div>

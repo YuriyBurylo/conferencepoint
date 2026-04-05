@@ -7,3 +7,26 @@
 .link {
     color: blue;
 }
+
+.downloadButton {
+    margin-top: 1rem;
+    width: 320px;
+    height: 50px;
+    background-color: darkgreen;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 5px;
+}
+
+.downloadButton:hover {
+    background-color: green;
+    cursor: pointer;
+    transform: scale(1.05);
+}
+
+.downloadButton:active {
+    color: yellow;
+    box-shadow: 0 0 10px yellow;
+}
