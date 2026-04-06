@@ -1,15 +1,17 @@
 .home {
     min-height: 87vh;
     place-items: center;
-    text-align: center;
+    place-content: center;
 }
 
 .heading {
-    margin-top: 180px;
+    margin-top: 100px;
+    color: #112D4E;
 }
 
 .subheading {
     margin-top: 2rem;
+    font-weight: 400;
 }
 
 .conference {

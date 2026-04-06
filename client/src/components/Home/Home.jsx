@@ -20,8 +20,8 @@ function Home() {
 
     return (
         <div className={styles.home}>
-            <h1 className={styles.heading}>Запрошуємо прийняти участь у наукових Інтернет-конференціях</h1>
-            <h2 className={styles.subheading}>Найближча конференція:</h2>
+            <h2 className={styles.heading}>Запрошуємо прийняти участь у наукових Інтернет-конференціях</h2>
+            <h2 className={styles.subheading}>найближча конференція:</h2>
             <div className={styles.conference}>
                 <ConferencePage
                 id={conference.conference_id}
@@ -30,7 +30,8 @@ function Home() {
                 country={conference.country} 
                 venue={conference.venue} 
                 timing={conference.timing}
-                fetchMaterials={fetchNewConferenceMaterials}/>
+                fetchMaterials={fetchNewConferenceMaterials}
+                btn="ІНФОРМАЦІЯ ПРО КОНФЕРЕНЦІЮ"/>
             </div>
 
         </div>

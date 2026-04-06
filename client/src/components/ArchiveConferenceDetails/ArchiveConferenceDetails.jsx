@@ -30,7 +30,8 @@ function ArchiveConferenceDetails() {
                 country = {conference.country}
                 venue = {conference.venue}
                 timing = {conference.timing} 
-                fetchMaterials={fetchArchiveConferenceMaterials}/>
+                fetchMaterials={fetchArchiveConferenceMaterials}
+                btn="МАТЕРІАЛИ КОНФЕРЕНЦІЇ"/>
 
         </div>
     )
