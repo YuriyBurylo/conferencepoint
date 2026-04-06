@@ -13,16 +13,15 @@ function NewConferences() {
 
     return (
         <div className={styles.conferences}>
+            <h2 className={styles.heading}>Актуальні конференції</h2>
             <ul>
                 {
-                    conferenceList.map((item, index) => <li key={index}>
-                        статус конференції: {item.conference_status}, 
-                        <Link to={`/newconferences/${item.conference_id}`}>
-                        назва:{item.title}
-                        </Link>
-                        місце проведення: {item.venue}, 
-                        країна: {item.country}, 
-                        дата проведення: {item.timing} 
+                    conferenceList.map((item, index) => <li className={styles.conference} key={index}>
+                        <div className={styles.time}>{item.timing.slice(0, 10).split('-').reverse().join('.')}</div>
+                        <div className={styles.status}>{item.conference_status}</div>
+                        <Link className={styles.title} to={`/newconferences/${item.conference_id}`}>{item.title}</Link>
+                        <div className={styles.venue}>{item.venue}</div> 
+                        <div className={styles.country}>{item.country}</div>
                         <button className={styles.downloadButton} onClick={() => fetchNewConferenceMaterials(item.conference_id)}>ІНФОРМАЦІЯ ПРО КОНФЕРЕНЦІЮ</button></li>)
                 }
             </ul>

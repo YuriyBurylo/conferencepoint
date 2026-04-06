@@ -12,18 +12,15 @@ function ArchiveConferences() {
 
     return (
         <div className={styles.archives}>
-            <div>Archives</div>
+            <h2 className={styles.heading}>Архів конференцій</h2>
             <ul>
                 {
-                   archiveConferences.map((item, index) => <li key={index}>
-                    Статус конференції: {item.conference_status},
-                    <Link to={`/pastconferences/${item.conference_id}`}>
-                    назва конференції: {item.title}, 
-                    </Link> 
-                    місце проведення: {item.venue}, 
-                    країна: {item.country}, 
-                    час проведення: {item.timing}, 
-                    учасники: {item.participants}
+                   archiveConferences.map((item, index) => <li className={styles.conference} key={index}>
+                    <div className={styles.time}>{item.timing}</div> 
+                    <div className={styles.status}>{item.conference_status}</div>
+                    <Link className={styles.title} to={`/pastconferences/${item.conference_id}`}>{item.title}</Link> 
+                    <div className={styles.venue}>{item.venue}</div> 
+                    <div className={styles.country}>{item.country}</div>  
                     <button className={styles.downloadButton} onClick={() => fetchArchiveConferenceMaterials(item.conference_id)}>МАТЕРІАЛИ КОНФЕРЕНЦІЇ</button></li>) 
                 }
             </ul>

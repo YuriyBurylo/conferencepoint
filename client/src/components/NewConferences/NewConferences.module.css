@@ -4,6 +4,49 @@
     place-items: center;
 }
 
+.heading {
+    font-weight: 600;
+    color: #112D4E;
+}
+
+.conference {
+    margin-top: 1.2rem;
+    border: 1px solid #112D4E;
+    border-radius: 5px;
+    padding: 0.5rem;
+    box-shadow: 0 0 10px #112D4E;
+    display: flex;
+    justify-content: space-between;
+    justify-items: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.time {
+    font-weight: 600;
+    color: #112D4E;
+}
+.status {
+    font-style: italic;
+    font-weight: 400;
+    color: #112D4E;
+}
+.title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #112D4E;
+}
+.venue {
+    font-style: italic;
+    font-weight: 400;
+    color: #112D4E;
+}
+.country {
+    font-style: italic;
+    font-weight: 400;
+    color: #112D4E;
+}
+
 .downloadButton {
     margin-top: 1rem;
     width: 320px;
