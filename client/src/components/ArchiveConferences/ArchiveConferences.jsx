@@ -16,7 +16,7 @@ function ArchiveConferences() {
             <ul>
                 {
                    archiveConferences.map((item, index) => <li className={styles.conference} key={index}>
-                    <div className={styles.time}>{item.timing}</div> 
+                    <div className={styles.time}>{item.timing.slice(0, 10).split('-').reverse().join('.')}</div> 
                     <div className={styles.status}>{item.conference_status}</div>
                     <Link className={styles.title} to={`/pastconferences/${item.conference_id}`}>{item.title}</Link> 
                     <div className={styles.venue}>{item.venue}</div> 

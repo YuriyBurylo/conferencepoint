@@ -15,10 +15,10 @@
 
 .conference {
     margin-top: 1.2rem;
-    border: 2px solid #112D4E;
+    border: 1px solid #112D4E;
     border-radius: 5px;
     padding: 0.5rem;
-    box-shadow: 0 0 5px #112D4E;;
+    box-shadow: 0 0 10px #112D4E;;
     display: flex;
     justify-content: space-between;
     justify-items: center;
