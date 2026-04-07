@@ -7,6 +7,7 @@ function Footer() {
         {platform: 'X', href: 'https://x.com'},
         {platform: 'Telegram', href: 'https://web.telegram.org'},
         {platform: 'Whatsapp', href: 'https://web.whatsapp.com'},
+        {platform: 'LinkedIn', href: 'https://www.linkedin.com'},
     ];
 
     return (

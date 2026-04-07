@@ -2,6 +2,7 @@
     min-height: 87vh;
     place-items: center;
     place-content: center;
+    text-align: center;
 }
 
 .heading {
@@ -76,4 +77,39 @@
 .downloadButton:active {
     color: yellow;
     box-shadow: 0 0 10px yellow;
+}
+
+@media screen and (max-width: 1100px) {
+    
+    .archives {
+        gap: 20px;
+    }
+
+    .heading {
+        margin-top: 7rem;
+    }
+
+    .conference {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .downloadButton {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 580px) and (orientation: portrait) {
+    .heading {
+        margin-top: 8rem;
+    }
+    
+    .conference {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .downloadButton {
+        width: 100%;
+    }
 }
