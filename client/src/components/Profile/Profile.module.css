@@ -1,0 +1,189 @@
+.profilePage {
+    min-height: 87vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+    padding-top: 7rem;
+}
+
+.profileCard {
+    width: 100%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(17, 45, 78, 0.15);
+    overflow: hidden;
+    border: 1px solid rgba(63, 114, 175, 0.2);
+}
+
+.profileHeader {
+    background: linear-gradient(135deg, #112D4E, #3F72AF);
+    padding: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #F9F7F7;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.profileHeader h2 {
+    color: #F9F7F7;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.roleBadge {
+    display: inline-block;
+    padding: 0.25rem 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: #F9F7F7;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+.profileInfo {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(63, 114, 175, 0.1);
+}
+
+.label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #3F72AF;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.value {
+    color: #112D4E;
+    font-size: 0.95rem;
+}
+
+.editBtn,
+.saveBtn {
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, #112D4E, #3F72AF);
+    color: #F9F7F7;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+    width: 100%;
+}
+
+.editBtn:hover,
+.saveBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(17, 45, 78, 0.3);
+}
+
+.cancelBtn {
+    padding: 0.75rem 2rem;
+    background: transparent;
+    color: #3F72AF;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 2px solid #3F72AF !important;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.cancelBtn:hover {
+    background: rgba(63, 114, 175, 0.1);
+}
+
+.editForm {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.formGroup label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #112D4E;
+}
+
+.formGroup input {
+    padding: 0.75rem 1rem;
+    border: 1.5px solid rgba(63, 114, 175, 0.3);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    background: rgba(249, 247, 247, 0.7);
+    color: #112D4E;
+    transition: all 0.25s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+.formGroup input:focus {
+    border-color: #3F72AF;
+    box-shadow: 0 0 0 3px rgba(63, 114, 175, 0.15);
+}
+
+.formActions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.success {
+    margin: 1rem 2rem 0;
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid rgba(40, 167, 69, 0.2);
+}
+
+.error {
+    margin: 1rem 2rem 0;
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    text-align: center;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}

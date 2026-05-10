@@ -4,6 +4,7 @@
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 100;
 }
 
 .heading {
@@ -29,17 +30,19 @@
 }
 
 .menu {
-    width: calc(100vw - 35px);
+    width: 100%;
     padding: 8px;
 }
 
 .menu_items {
     display: flex;
     justify-content: space-around;
+    align-items: center;
 }
 
 .menu a {
     color: #DBE2EF;
+    transition: color 0.2s ease;
 }
 
 .menu li {
@@ -47,24 +50,111 @@
 }
 
 .menu li:hover {
-    transform: scale(1.2);
+    transform: scale(1.08);
 }
 
 .menu a:active {
     color: goldenrod;
 }
 
+.activeLink {
+    color: goldenrod !important;
+    font-weight: 600;
+}
+
+/* Auth section in nav */
+.authSection {
+    display: flex;
+    align-items: center;
+    margin-left: 0.5rem;
+}
+
+.userMenu {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.userAvatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(219, 226, 239, 0.2);
+    color: #DBE2EF;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: 2px solid rgba(219, 226, 239, 0.3);
+    transition: all 0.2s ease;
+}
+
+.userAvatar:hover {
+    background: rgba(219, 226, 239, 0.3);
+}
+
+.profileLink {
+    text-decoration: none;
+}
+
+.logoutBtn {
+    padding: 0.35rem 0.8rem;
+    background: rgba(220, 53, 69, 0.2);
+    color: #ff6b7a;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+    background: rgba(220, 53, 69, 0.35);
+}
+
+.authLinks {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.loginLink {
+    color: #DBE2EF !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.loginLink:hover {
+    color: goldenrod !important;
+}
+
+.registerLink {
+    padding: 0.35rem 0.8rem;
+    background: rgba(63, 114, 175, 0.4);
+    color: #F9F7F7 !important;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.registerLink:hover {
+    background: rgba(63, 114, 175, 0.6);
+}
+
 .btn {
     display: none;
 }
 
-@media screen and (max-width: 580px) and (orientation: portrait) {
+@media screen and (max-width: 768px) and (orientation: portrait) {
     .menu {
         display: none;
     }
 
     .menu_vertical {
-        width: 40%;
+        width: 60%;
         padding: 10px 0;
     }
 
@@ -74,6 +164,7 @@
 
     .menu_vertical li {
         transition: all .2s .1s ease-out;
+        padding: 4px 8px;
     }
 
     .menu_vertical li:hover {
@@ -84,10 +175,22 @@
         color: goldenrod;
     }
 
+    .menu_vertical .activeLink {
+        color: goldenrod !important;
+        font-weight: 600;
+    }
+
     .menu_items_vertical {
         display: flex;
         flex-direction: column;
         justify-content: space-between; 
+    }
+
+    .menu_items_vertical .authSection {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(219, 226, 239, 0.15);
     }
 
     .btn {
@@ -99,7 +202,3 @@
         justify-self: right;
     }
 }
-
-
-
-

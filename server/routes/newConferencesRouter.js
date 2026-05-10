@@ -1,12 +1,16 @@
 const Router = require('express');
 const newConferencesRouter = new Router();
 const newConferencesController = require('../controllers/newConferencesController');
+const { adminMiddleware } = require('../middleware/authMiddleware');
 
-newConferencesRouter.post('/', newConferencesController.createConference);
+// Public routes
 newConferencesRouter.get('/', newConferencesController.getConferences);
 newConferencesRouter.get('/:id', newConferencesController.getConferenceById);
 newConferencesRouter.get('/:id/materials', newConferencesController.getConferenceMaterials);
-newConferencesRouter.put('/', newConferencesController.updateConference);
-newConferencesRouter.delete('/:id', newConferencesController.deleteConference);
+
+// Admin-only routes
+newConferencesRouter.post('/', adminMiddleware, newConferencesController.createConference);
+newConferencesRouter.put('/', adminMiddleware, newConferencesController.updateConference);
+newConferencesRouter.delete('/:id', adminMiddleware, newConferencesController.deleteConference);
 
 module.exports = newConferencesRouter;

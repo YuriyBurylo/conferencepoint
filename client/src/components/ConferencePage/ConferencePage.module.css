@@ -1,60 +1,76 @@
 .container {
     text-align: center;
     height: auto;
-    padding: 1.2rem;    
-    border: 1px solid #112D4E;
-    border-radius: 5px;
-    box-shadow: 0 0 10px #112D4E;
+    padding: 1.5rem 2rem;    
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(63, 114, 175, 0.15);
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(17, 45, 78, 0.1);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(17, 45, 78, 0.15);
 }
 
 .status {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     font-style: italic;
     font-weight: 400;
+    color: #3F72AF;
+    font-size: 0.95rem;
 }
 
 .title {
-    margin-top: 1rem;
+    margin-top: 0.75rem;
     color: #112D4E;
-    text-shadow: 0 1px 1px #112D4E;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }
 
 .country {
-    margin-top: 1rem;
-    font-size: 1.2rem;
+    margin-top: 0.75rem;
+    font-size: 1.05rem;
     font-style: italic;
+    color: #3F72AF;
 }
 
 .venue {
-    margin-top: 0.4rem;
-    font-size: 1.2rem;
-    font-style:italic;
+    margin-top: 0.3rem;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: #3F72AF;
 }
 
 .timing {
-    margin-top: 0.4rem;
-    font-size: 1.2rem;
+    margin-top: 0.3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #112D4E;
 }
 
 .downloadButton {
-    margin-top: 1rem;
-    width: 320px;
-    height: 50px;
-    background-color: darkgreen;
+    margin-top: 1.2rem;
+    padding: 0.8rem 2rem;
+    min-width: 280px;
+    background: linear-gradient(135deg, #1a6b3c, #28a745);
     color: #fff;
-    font-size: 16px;
+    font-size: 0.95rem;
     font-weight: 600;
-    letter-spacing: 1px;
-    border-radius: 5px;
+    letter-spacing: 0.03em;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .downloadButton:hover {
-    background-color: green;
-    cursor: pointer;
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.35);
 }
 
 .downloadButton:active {
-    color: yellow;
-    box-shadow: 0 0 10px yellow;
+    transform: translateY(0);
 }

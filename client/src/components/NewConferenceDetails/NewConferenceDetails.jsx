@@ -14,7 +14,7 @@ function NewConferenceDetails() {
             setConference(response.data);
             setLoading(false);
         });
-    }, []);
+    }, [id]);
 
     
     if(loading) {

@@ -1,17 +1,34 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import styles from './Header.module.css';
-
-const menu = [
-    {section: 'Головна', href: '/'},
-    {section: 'Актуальні конференції', href: 'newconferences'},
-    {section: 'Архів конференцій', href: 'pastconferences'},
-    {section: 'Вимоги', href: 'requirements'},
-    {section: 'Оплата', href: 'fees'}
-];
 
 function Header() {
     const [open, setOpen] = useState(false);
+    const { isAuthenticated, isAdmin, user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const menu = [
+        {section: 'Головна', href: '/'},
+        {section: 'Актуальні конференції', href: '/newconferences'},
+        {section: 'Архів конференцій', href: '/pastconferences'},
+        {section: 'Вимоги', href: '/requirements'},
+        {section: 'Оплата', href: '/fees'},
+    ];
+
+    if (isAuthenticated) {
+        menu.push({section: 'Мої статті', href: '/my-articles'});
+    }
+
+    if (isAdmin) {
+        menu.push({section: 'Адмін', href: '/admin'});
+    }
+
+    const handleLogout = () => {
+        logout();
+        setOpen(false);
+        navigate('/');
+    };
 
     return (
         <header className={styles.header}>
@@ -23,11 +40,40 @@ function Header() {
                 <nav className={open ? styles.menu_vertical : styles.menu}>
                     <ul className={open ? styles.menu_items_vertical : styles.menu_items}>
                         {
-                            menu.map((item, index) => <li key={index}><NavLink to={item.href}>{item.section}</NavLink></li>)
+                            menu.map((item, index) => (
+                                <li key={index}>
+                                    <NavLink 
+                                        to={item.href} 
+                                        onClick={() => setOpen(false)}
+                                        className={({isActive}) => isActive ? styles.activeLink : ''}
+                                    >
+                                        {item.section}
+                                    </NavLink>
+                                </li>
+                            ))
                         }
+                        <li className={styles.authSection}>
+                            {isAuthenticated ? (
+                                <div className={styles.userMenu}>
+                                    <NavLink 
+                                        to="/profile" 
+                                        className={styles.profileLink}
+                                        onClick={() => setOpen(false)}
+                                    >
+                                        <span className={styles.userAvatar}>{user?.full_name?.charAt(0)?.toUpperCase()}</span>
+                                    </NavLink>
+                                    <button className={styles.logoutBtn} onClick={handleLogout}>Вийти</button>
+                                </div>
+                            ) : (
+                                <div className={styles.authLinks}>
+                                    <NavLink to="/login" className={styles.loginLink} onClick={() => setOpen(false)}>Увійти</NavLink>
+                                    <NavLink to="/register" className={styles.registerLink} onClick={() => setOpen(false)}>Реєстрація</NavLink>
+                                </div>
+                            )}
+                        </li>
                     </ul>
                 </nav>
-                <button className={styles.btn} onClick = {() => setOpen(!open)}>
+                <button className={styles.btn} onClick={() => setOpen(!open)}>
                     {open ? 
                         <svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" fill="#DBE2EF" stroke="#DBE2EF"><g id="SVGRepo_bgCarrier" strokeWidth="0"></g><g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g><g id="SVGRepo_iconCarrier"><path fill="" d="M195.2 195.2a64 64 0 0 1 90.496 0L512 421.504 738.304 195.2a64 64 0 0 1 90.496 90.496L602.496 512 828.8 738.304a64 64 0 0 1-90.496 90.496L512 602.496 285.696 828.8a64 64 0 0 1-90.496-90.496L421.504 512 195.2 285.696a64 64 0 0 1 0-90.496z"></path></g></svg>
                         :

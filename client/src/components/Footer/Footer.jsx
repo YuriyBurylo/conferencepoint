@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import styles from './Footer.module.css';
 
 function Footer() {
@@ -15,7 +14,7 @@ function Footer() {
             <div className={styles.socials}>
                 <ul>
                     {
-                        socials.map((item, index) => <li key={index}><Link to={item.href}>{item.platform}</Link></li>)
+                        socials.map((item, index) => <li key={index}><a href={item.href} target="_blank" rel="noopener noreferrer">{item.platform}</a></li>)
                     }
                 </ul>
             </div>

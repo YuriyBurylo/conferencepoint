@@ -2,7 +2,6 @@ import { $host } from './index';
 
 export const fetchNextConference = async () => {
     const response = await $host.get('api/nextconference');
-    console.log(response);
     return response;
 };
 
@@ -16,10 +15,8 @@ export const fetchNewConferenceById = async (id) => {
     return response;
 };
 
-
 export const fetchArchiveConferences = async () => {
     const response = await $host.get('api/pastconferences');
-    console.log(response);
     return response;
 };
 
@@ -31,7 +28,6 @@ export const fetchArchiveConferenceById = async (id) => {
 export const fetchArchiveConferenceMaterials = async (id) => {
     const response = await $host.get(`api/pastconferences/${id}/materials`, {responseType: 'blob'});
     const blobResult = response.data;
-    console.log(blobResult);
 
     const url = window.URL.createObjectURL(blobResult);
 
@@ -51,7 +47,6 @@ export const fetchArchiveConferenceMaterials = async (id) => {
 export const fetchNewConferenceMaterials = async (id) => {
     const response = await $host.get(`api/newconferences/${id}/materials`, {responseType: 'blob'});
     const blobResult = response.data;
-    console.log(blobResult);
 
     const url = window.URL.createObjectURL(blobResult);
 
@@ -66,5 +61,4 @@ export const fetchNewConferenceMaterials = async (id) => {
         link.remove();
         URL.revokeObjectURL(url);
     }, 1000);
-}
-
+};

@@ -1,86 +1,102 @@
 .archives {
     min-height: 87vh;
+    max-width: 960px;
+    margin: 0 auto;
     place-items: center;
     place-content: center;
     text-align: center;
+    padding: 0 1rem;
 }
 
 .heading {
-    font-weight: 600;
+    font-weight: 700;
     color: #112D4E;
-}
-
-.link {
-    color: blue;
+    font-size: 1.6rem;
+    letter-spacing: -0.01em;
 }
 
 .conference {
     margin-top: 1.2rem;
-    border: 1px solid #112D4E;
-    border-radius: 5px;
-    padding: 0.5rem;
-    box-shadow: 0 0 10px #112D4E;;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(63, 114, 175, 0.15);
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 16px rgba(17, 45, 78, 0.08);
     display: flex;
     justify-content: space-between;
-    justify-items: center;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.conference:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(17, 45, 78, 0.12);
 }
 
 .time {
-    font-weight: 600;
+    font-weight: 700;
     color: #112D4E;
+    font-size: 0.95rem;
+    white-space: nowrap;
 }
 
 .status {
     font-style: italic;
     font-weight: 400;
-    color: #112D4E;
+    color: #3F72AF;
+    font-size: 0.9rem;
 }
 
 .title {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #112D4E;
+    transition: color 0.2s ease;
+}
+
+.title:hover {
+    color: #3F72AF;
 }
 
 .venue {
     font-style: italic;
     font-weight: 400;
-    color: #112D4E;
+    color: #3F72AF;
+    font-size: 0.9rem;
 }
 
 .country {
     font-style: italic;
     font-weight: 400;
-    color: #112D4E;
+    color: #3F72AF;
+    font-size: 0.9rem;
 }
 
 .downloadButton {
-    margin-top: 1rem;
-    width: 320px;
-    height: 50px;
-    background-color: darkgreen;
+    padding: 0.65rem 1.5rem;
+    background: linear-gradient(135deg, #1a6b3c, #28a745);
     color: #fff;
-    font-size: 16px;
+    font-size: 0.85rem;
     font-weight: 600;
-    letter-spacing: 1px;
-    border-radius: 5px;
+    letter-spacing: 0.03em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .downloadButton:hover {
-    background-color: green;
-    cursor: pointer;
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.35);
 }
 
 .downloadButton:active {
-    color: yellow;
-    box-shadow: 0 0 10px yellow;
+    transform: translateY(0);
 }
 
 @media screen and (max-width: 1100px) {
-    
     .archives {
         gap: 20px;
     }
@@ -91,7 +107,7 @@
 
     .conference {
         flex-direction: column;
-        gap: 5px;
+        gap: 6px;
     }
 
     .downloadButton {
@@ -106,7 +122,7 @@
     
     .conference {
         flex-direction: column;
-        gap: 5px;
+        gap: 6px;
     }
 
     .downloadButton {
