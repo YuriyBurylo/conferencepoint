@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 
 app.use(cors({
-  origin: true, // разрешает любой origin, который прислал запрос
+  origin: true,
   credentials: true
 }));
 app.use(express.json());
@@ -19,5 +19,14 @@ app.use(fileUpload({}));
 app.use('/api', router);
 
 
-app.listen(PORT, () => console.log(`Server started at port: ${PORT}`));
+const start = async () => {
+  try {
+    await app.listen(PORT);
+    console.log(`Server started at port: ${PORT}`);
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
 
+start();
