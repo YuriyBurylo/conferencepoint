@@ -4,7 +4,7 @@
     align-items: flex-start;
     justify-content: center;
     padding: 2rem 1rem;
-    padding-top: 7rem;
+    padding-top: 9rem;
 }
 
 .profileCard {
@@ -68,23 +68,24 @@
 
 .infoRow {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 0.25rem;
     padding: 0.75rem 0;
     border-bottom: 1px solid rgba(63, 114, 175, 0.1);
 }
 
 .label {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: #3F72AF;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
 }
 
 .value {
     color: #112D4E;
     font-size: 0.95rem;
+    word-break: break-word;
 }
 
 .editBtn,

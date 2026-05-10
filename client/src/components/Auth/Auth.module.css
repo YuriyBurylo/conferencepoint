@@ -1,10 +1,10 @@
 .authPage {
     min-height: 87vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 2rem 1rem;
-    padding-top: 7rem;
+    padding-top: 9rem;
 }
 
 .authCard {
