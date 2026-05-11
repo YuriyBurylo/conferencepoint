@@ -12,5 +12,6 @@ newConferencesRouter.get('/:id/materials', newConferencesController.getConferenc
 newConferencesRouter.post('/', adminMiddleware, newConferencesController.createConference);
 newConferencesRouter.put('/', adminMiddleware, newConferencesController.updateConference);
 newConferencesRouter.delete('/:id', adminMiddleware, newConferencesController.deleteConference);
+newConferencesRouter.post('/:id/archive', adminMiddleware, newConferencesController.moveToArchive);
 
 module.exports = newConferencesRouter;

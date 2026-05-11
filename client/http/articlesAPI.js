@@ -31,6 +31,20 @@ export const downloadArticle = async (id, fileName) => {
     }, 1000);
 };
 
+export const downloadReceipt = async (id, fileName) => {
+    const response = await $authHost.get(`api/articles/${id}/receipt`, { responseType: 'blob' });
+    const url = window.URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+        link.remove();
+        URL.revokeObjectURL(url);
+    }, 1000);
+};
+
 export const updateArticle = async (id, formData) => {
     const response = await $authHost.put(`api/articles/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -48,6 +62,10 @@ export const getAllArticles = async (filters = {}) => {
     const params = new URLSearchParams();
     if (filters.status) params.append('status', filters.status);
     if (filters.conference_id) params.append('conference_id', filters.conference_id);
+    if (filters.author) params.append('author', filters.author);
+    if (filters.conference_date) params.append('conference_date', filters.conference_date);
+    if (filters.submission_date) params.append('submission_date', filters.submission_date);
+    if (filters.has_receipt) params.append('has_receipt', filters.has_receipt);
     const response = await $authHost.get(`api/articles?${params.toString()}`);
     return response.data;
 };
@@ -56,3 +74,25 @@ export const reviewArticle = async (id, data) => {
     const response = await $authHost.patch(`api/articles/${id}/review`, data);
     return response.data;
 };
+
+export const downloadAllArticles = async (filters = {}) => {
+    const params = new URLSearchParams();
+    if (filters.status) params.append('status', filters.status);
+    if (filters.conference_id) params.append('conference_id', filters.conference_id);
+    if (filters.author) params.append('author', filters.author);
+    if (filters.conference_date) params.append('conference_date', filters.conference_date);
+    if (filters.submission_date) params.append('submission_date', filters.submission_date);
+    if (filters.has_receipt) params.append('has_receipt', filters.has_receipt);
+    const response = await $authHost.get(`api/articles/download-all?${params.toString()}`, { responseType: 'blob' });
+    const url = window.URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'articles.zip');
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+        link.remove();
+        URL.revokeObjectURL(url);
+    }, 1000);
+};
+

@@ -13,6 +13,8 @@ articlesRouter.delete('/:id', authMiddleware, articlesController.deleteArticle);
 
 // Admin routes
 articlesRouter.get('/', adminMiddleware, articlesController.getAllArticles);
+articlesRouter.get('/download-all', adminMiddleware, articlesController.downloadAllArticles);
 articlesRouter.patch('/:id/review', adminMiddleware, articlesController.reviewArticle);
+articlesRouter.get('/:id/receipt', adminMiddleware, articlesController.downloadReceipt);
 
 module.exports = articlesRouter;

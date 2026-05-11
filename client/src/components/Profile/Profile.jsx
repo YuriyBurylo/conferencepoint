@@ -9,7 +9,8 @@ function Profile() {
     const [formData, setFormData] = useState({
         full_name: '',
         affiliation: '',
-        scientific_degree: ''
+        scientific_degree: '',
+        academic_title: ''
     });
     const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -18,7 +19,8 @@ function Profile() {
             setFormData({
                 full_name: user.full_name || '',
                 affiliation: user.affiliation || '',
-                scientific_degree: user.scientific_degree || ''
+                scientific_degree: user.scientific_degree || '',
+                academic_title: user.academic_title || ''
             });
         }
     }, [user]);
@@ -78,6 +80,10 @@ function Profile() {
                             <span className={styles.value}>{user.scientific_degree || '—'}</span>
                         </div>
                         <div className={styles.infoRow}>
+                            <span className={styles.label}>Вчене звання</span>
+                            <span className={styles.value}>{user.academic_title || '—'}</span>
+                        </div>
+                        <div className={styles.infoRow}>
                             <span className={styles.label}>Дата реєстрації</span>
                             <span className={styles.value}>{new Date(user.created_at).toLocaleDateString('uk-UA')}</span>
                         </div>
@@ -112,6 +118,15 @@ function Profile() {
                                 type="text"
                                 name="scientific_degree"
                                 value={formData.scientific_degree}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>Вчене звання</label>
+                            <input
+                                type="text"
+                                name="academic_title"
+                                value={formData.academic_title}
                                 onChange={handleChange}
                             />
                         </div>

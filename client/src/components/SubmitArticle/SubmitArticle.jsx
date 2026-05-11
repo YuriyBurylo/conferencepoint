@@ -67,9 +67,15 @@ function SubmitArticle() {
             setError('Назва статті обов\'язкова');
             return;
         }
-        if (step === 3 && !articleFile) {
-            setError('Файл статті обов\'язковий');
-            return;
+        if (step === 3) {
+            if (!articleFile) {
+                setError('Файл статті обов\'язковий');
+                return;
+            }
+            if (!receiptFile) {
+                setError('Квитанція про оплату обов\'язкова');
+                return;
+            }
         }
         setError('');
         setStep(step + 1);
@@ -193,7 +199,7 @@ function SubmitArticle() {
                         <div className={styles.stepContent}>
                             <h3>Завантаження файлів</h3>
                             <div className={styles.formGroup}>
-                                <label>Файл статті * (.doc, .docx, .pdf)</label>
+                                <label>Файл статті * (.doc, .docx)</label>
                                 <div className={styles.fileUpload}>
                                     <input
                                         type="file"
@@ -211,12 +217,12 @@ function SubmitArticle() {
                                 </div>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Квитанція про оплату (необов'язково)</label>
+                                <label>Квитанція про оплату * (.pdf)</label>
                                 <div className={styles.fileUpload}>
                                     <input
                                         type="file"
                                         id="receipt-file"
-                                        accept=".jpg,.jpeg,.png,.pdf"
+                                        accept=".pdf"
                                         onChange={(e) => setReceiptFile(e.target.files[0])}
                                     />
                                     <label htmlFor="receipt-file" className={styles.fileLabel}>

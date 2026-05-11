@@ -4,7 +4,7 @@
     align-items: flex-start;
     justify-content: center;
     padding: 2rem 1rem;
-    padding-top: 9rem;
+    padding-top: 12rem;
 }
 
 .authCard {
@@ -88,6 +88,12 @@
 .formRow {
     display: flex;
     gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.formRow .formGroup {
+    min-width: 0;
+    flex: 1 1 200px;
 }
 
 .error {

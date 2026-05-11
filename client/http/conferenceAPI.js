@@ -1,4 +1,4 @@
-import { $host } from './index';
+import { $host, $authHost } from './index';
 
 export const fetchNextConference = async () => {
     const response = await $host.get('api/nextconference');
@@ -61,4 +61,9 @@ export const fetchNewConferenceMaterials = async (id) => {
         link.remove();
         URL.revokeObjectURL(url);
     }, 1000);
+};
+
+export const moveConferenceToArchive = async (id) => {
+    const response = await $authHost.post(`api/newconferences/${id}/archive`);
+    return response.data;
 };

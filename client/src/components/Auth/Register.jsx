@@ -11,7 +11,8 @@ function Register() {
         confirmPassword: '',
         full_name: '',
         affiliation: '',
-        scientific_degree: ''
+        scientific_degree: '',
+        academic_title: ''
     });
     const [error, setError] = useState('');
     const [submitting, setSubmitting] = useState(false);
@@ -129,6 +130,17 @@ function Register() {
                             value={formData.scientific_degree}
                             onChange={handleChange}
                             placeholder="напр. к.т.н., д.е.н."
+                        />
+                    </div>
+                    <div className={styles.formGroup}>
+                        <label htmlFor="reg-title">Вчене звання</label>
+                        <input
+                            id="reg-title"
+                            type="text"
+                            name="academic_title"
+                            value={formData.academic_title}
+                            onChange={handleChange}
+                            placeholder="напр. доцент, професор"
                         />
                     </div>
                     <button

@@ -13,7 +13,7 @@ const generateToken = (user) => {
 class AuthController {
     async register(req, res) {
         try {
-            const { email, password, full_name, affiliation, scientific_degree } = req.body;
+            const { email, password, full_name, affiliation, scientific_degree, academic_title } = req.body;
 
             if (!email || !password || !full_name) {
                 return res.status(400).json({ message: 'Email, пароль та повне ім\'я обов\'язкові' });
@@ -30,8 +30,8 @@ class AuthController {
 
             const password_hash = await bcrypt.hash(password, 10);
             const result = await db.query(
-                'INSERT INTO users (email, password_hash, full_name, affiliation, scientific_degree) VALUES ($1, $2, $3, $4, $5) RETURNING user_id, email, full_name, affiliation, scientific_degree, role, created_at',
-                [email, password_hash, full_name, affiliation || null, scientific_degree || null]
+                'INSERT INTO users (email, password_hash, full_name, affiliation, scientific_degree, academic_title) VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id, email, full_name, affiliation, scientific_degree, academic_title, role, created_at',
+                [email, password_hash, full_name, affiliation || null, scientific_degree || null, academic_title || null]
             );
 
             const user = result.rows[0];
@@ -74,6 +74,7 @@ class AuthController {
                     full_name: user.full_name,
                     affiliation: user.affiliation,
                     scientific_degree: user.scientific_degree,
+                    academic_title: user.academic_title,
                     role: user.role,
                     created_at: user.created_at
                 }
@@ -87,7 +88,7 @@ class AuthController {
     async getProfile(req, res) {
         try {
             const result = await db.query(
-                'SELECT user_id, email, full_name, affiliation, scientific_degree, role, created_at FROM users WHERE user_id = $1',
+                'SELECT user_id, email, full_name, affiliation, scientific_degree, academic_title, role, created_at FROM users WHERE user_id = $1',
                 [req.user.user_id]
             );
             const user = result.rows[0];
@@ -105,10 +106,10 @@ class AuthController {
 
     async updateProfile(req, res) {
         try {
-            const { full_name, affiliation, scientific_degree } = req.body;
+            const { full_name, affiliation, scientific_degree, academic_title } = req.body;
             const result = await db.query(
-                'UPDATE users SET full_name = COALESCE($1, full_name), affiliation = COALESCE($2, affiliation), scientific_degree = COALESCE($3, scientific_degree), updated_at = NOW() WHERE user_id = $4 RETURNING user_id, email, full_name, affiliation, scientific_degree, role',
-                [full_name, affiliation, scientific_degree, req.user.user_id]
+                'UPDATE users SET full_name = COALESCE($1, full_name), affiliation = COALESCE($2, affiliation), scientific_degree = COALESCE($3, scientific_degree), academic_title = COALESCE($4, academic_title), updated_at = NOW() WHERE user_id = $5 RETURNING user_id, email, full_name, affiliation, scientific_degree, academic_title, role',
+                [full_name, affiliation, scientific_degree, academic_title, req.user.user_id]
             );
 
             res.json(result.rows[0]);
@@ -121,7 +122,7 @@ class AuthController {
     async getAllUsers(req, res) {
         try {
             const result = await db.query(
-                'SELECT user_id, email, full_name, affiliation, scientific_degree, role, created_at FROM users ORDER BY created_at DESC'
+                'SELECT user_id, email, full_name, affiliation, scientific_degree, academic_title, role, created_at FROM users ORDER BY created_at DESC'
             );
             res.json(result.rows);
         } catch (error) {

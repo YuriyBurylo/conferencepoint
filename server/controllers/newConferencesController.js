@@ -96,6 +96,41 @@ class NewConferencesController {
             res.status(500).json({ message: 'Помилка при видаленні конференції' });
         }
     }
+
+    async moveToArchive(req, res) {
+        const client = await db.connect();
+        try {
+            await client.query('BEGIN');
+            const { id } = req.params;
+
+            const newConfResult = await client.query('SELECT * FROM new_conferences WHERE conference_id = $1', [id]);
+            const conf = newConfResult.rows[0];
+            if (!conf) {
+                await client.query('ROLLBACK');
+                return res.status(404).json({ message: 'Конференцію не знайдено' });
+            }
+
+            const insertResult = await client.query(
+                'INSERT INTO archive_conferences (conference_status, title, venue, country, timing, participants, textpdf) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING conference_id',
+                [conf.conference_status, conf.title, conf.venue, conf.country, conf.timing, null, conf.leaflet]
+            );
+            const newArchiveId = insertResult.rows[0].conference_id;
+
+            await client.query('UPDATE articles SET conference_id = $1 WHERE conference_id = $2', [newArchiveId, id]);
+
+            await client.query('DELETE FROM new_conferences WHERE conference_id = $1', [id]);
+
+            await client.query('COMMIT');
+            res.json({ message: 'Конференцію успішно переміщено в архів' });
+        } catch (error) {
+            await client.query('ROLLBACK');
+            console.error('Error moving conference to archive:', error.message);
+            res.status(500).json({ message: 'Помилка при переміщенні в архів' });
+        } finally {
+            client.release();
+        }
+    }
 }
 
 module.exports = new NewConferencesController();
+// Trigger nodemon restart

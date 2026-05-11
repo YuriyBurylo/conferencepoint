@@ -15,7 +15,10 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, 'static')));
-app.use(fileUpload({}));
+app.use(fileUpload({
+  defCharset: 'utf8',
+  defParamCharset: 'utf8'
+}));
 app.use('/api', router);
 
 
