@@ -46,6 +46,7 @@
     color: #F9F7F7;
     font-size: 1.5rem;
     font-weight: 600;
+    word-break: break-word;
 }
 
 .roleBadge {
@@ -154,6 +155,7 @@
     transition: all 0.25s ease;
     outline: none;
     font-family: inherit;
+    width: 100%;
 }
 
 .formGroup input:focus {
@@ -187,4 +189,71 @@
     font-size: 0.9rem;
     text-align: center;
     border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+@media screen and (max-width: 768px) {
+    .profilePage {
+        padding-top: 8rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .profileHeader {
+        padding: 1.5rem;
+    }
+
+    .avatar {
+        width: 64px;
+        height: 64px;
+        font-size: 1.5rem;
+    }
+
+    .profileHeader h2 {
+        font-size: 1.3rem;
+    }
+
+    .profileInfo {
+        padding: 1.5rem;
+    }
+
+    .editForm {
+        padding: 1.5rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .profilePage {
+        padding-top: 6.5rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .profileCard {
+        border-radius: 12px;
+    }
+
+    .profileHeader {
+        padding: 1.25rem;
+    }
+
+    .profileHeader h2 {
+        font-size: 1.15rem;
+    }
+
+    .profileInfo {
+        padding: 1.25rem;
+    }
+
+    .editForm {
+        padding: 1.25rem;
+    }
+
+    .formActions {
+        flex-direction: column;
+    }
+
+    .success, .error {
+        margin: 0.75rem 1.25rem 0;
+        font-size: 0.85rem;
+    }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import styles from './Header.module.css';
@@ -7,6 +7,16 @@ function Header() {
     const [open, setOpen] = useState(false);
     const { isAuthenticated, isAdmin, user, logout } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768 && open) {
+                setOpen(false);
+            }
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [open]);
 
     const menu = [
         {section: 'Головна', href: '/'},

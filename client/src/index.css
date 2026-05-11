@@ -37,6 +37,8 @@ html, body {
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 header, footer, nav, aside {
@@ -60,4 +62,24 @@ html {
 ::selection {
   background: rgba(63, 114, 175, 0.25);
   color: var(--color-primary);
+}
+
+/* Responsive font sizes */
+@media screen and (max-width: 480px) {
+  html, body {
+    font-size: 14px;
+  }
+}
+
+/* Ensure images and media don't overflow */
+img, video, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better touch targets for mobile */
+@media (pointer: coarse) {
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
 }

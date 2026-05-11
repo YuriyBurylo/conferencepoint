@@ -16,11 +16,13 @@
 .heading h1 {
     color: #112D4E;
     letter-spacing: 0.2rem;
+    font-size: clamp(1.1rem, 3.5vw, 2rem);
 }
 
 .heading h2 {
     color: #DBE2EF;
     letter-spacing: 0.1rem;
+    font-size: clamp(0.75rem, 2vw, 1.17rem);
 }
 
 .navigation {
@@ -38,11 +40,15 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
 }
 
 .menu a {
     color: #DBE2EF;
     transition: color 0.2s ease;
+    font-size: clamp(0.75rem, 1.3vw, 0.95rem);
+    white-space: nowrap;
 }
 
 .menu li {
@@ -96,6 +102,8 @@
 
 .profileLink {
     text-decoration: none;
+    display: flex;
+    align-items: center;
 }
 
 .logoutBtn {
@@ -148,27 +156,61 @@
     display: none;
 }
 
-@media screen and (max-width: 768px) and (orientation: portrait) {
+/* Tablet breakpoint */
+@media screen and (max-width: 1024px) {
+    .menu_items {
+        gap: 2px;
+    }
+
+    .menu a {
+        font-size: 0.8rem;
+    }
+
+    .authSection {
+        margin-left: 0.25rem;
+    }
+}
+
+/* Mobile breakpoint – hamburger menu */
+@media screen and (max-width: 768px) {
+    .heading {
+        padding: 6px 8px;
+    }
+
     .menu {
         display: none;
     }
 
     .menu_vertical {
-        width: 60%;
+        width: 100%;
         padding: 10px 0;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .menu_vertical a {
         color: #DBE2EF;
+        font-size: 0.95rem;
     }
 
     .menu_vertical li {
         transition: all .2s .1s ease-out;
-        padding: 4px 8px;
+        padding: 6px 16px;
     }
 
     .menu_vertical li:hover {
-        transform: scale(1.05);
+        transform: scale(1.02);
+        background: rgba(219, 226, 239, 0.05);
     }
 
     .menu_vertical a:active {
@@ -189,16 +231,30 @@
     .menu_items_vertical .authSection {
         margin-left: 0;
         margin-top: 0.5rem;
-        padding-top: 0.5rem;
+        padding: 0.75rem 16px;
         border-top: 1px solid rgba(219, 226, 239, 0.15);
     }
 
     .btn {
         display: block;
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
+        min-height: 40px;
         background: transparent;
         align-self: center;
         justify-self: right;
+        padding: 4px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+}
+
+@media screen and (max-width: 380px) {
+    .heading h1 {
+        letter-spacing: 0.1rem;
+    }
+
+    .heading h2 {
+        letter-spacing: 0.05rem;
     }
 }

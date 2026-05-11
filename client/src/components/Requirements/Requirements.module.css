@@ -5,24 +5,29 @@
     place-items: center;
     place-content: center;
     text-align: center;
+    padding: 0 1rem;
 }
 
 .requirements h2 {
     color: #112D4E;
     margin-top: 9rem;
     margin-bottom: 0.8rem;
+    font-size: clamp(1.1rem, 3vw, 1.5rem);
+    word-break: break-word;
 }
 
 .requirements h3 {
     margin-top: 1rem;
     color: #112D4E;
     margin-bottom: 1rem;
+    font-size: clamp(0.95rem, 2.5vw, 1.17rem);
 }
 
 .requirements h4 {
     margin-top: 1rem;
     color: #112D4E;
     margin-bottom: 1rem;
+    font-size: clamp(0.9rem, 2vw, 1rem);
 }
 
 .container {
@@ -35,12 +40,15 @@
 
 .container p {
     text-align: left;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .sections {
     display: flex;
     text-align: left;
     margin-bottom: 1.5rem;
+    gap: 1rem;
 }
 
 .sectionsBlock {
@@ -59,5 +67,63 @@
     }
     .sectionsBlock {
         padding-left: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .requirements {
+        padding: 0 0.75rem;
+    }
+
+    .requirements h2 {
+        margin-top: 6rem;
+        font-size: 1.15rem;
+    }
+
+    .requirements h3 {
+        font-size: 1rem;
+    }
+
+    .sections {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .sectionsBlock {
+        padding-left: 0;
+        font-size: 0.9rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .requirements {
+        padding: 0 0.5rem;
+    }
+
+    .requirements h2 {
+        margin-top: 5.5rem;
+        font-size: 1.05rem;
+    }
+
+    .requirements h3 {
+        font-size: 0.9rem;
+    }
+
+    .requirements h4 {
+        font-size: 0.85rem;
+    }
+
+    .container {
+        padding: 0.25rem;
+    }
+
+    .container p {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .sectionsBlock {
+        font-size: 0.8rem;
+        line-height: 1.6;
     }
 }

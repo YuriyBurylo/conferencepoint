@@ -22,7 +22,7 @@ function ArchiveConferenceDetails() {
     };
 
     return (
-        <div style={{minHeight: '87vh', placeItems: 'center', placeContent: 'center'}} className={styles.container}>
+        <div className={styles.container}>
             <ConferencePage
                 id = {conference.conference_id} 
                 status = {conference.conference_status} 

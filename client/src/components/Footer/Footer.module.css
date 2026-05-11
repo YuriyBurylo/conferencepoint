@@ -4,11 +4,12 @@
 
 .socials {
     background-color: #3F72AF;
-    padding: 8px;
+    padding: 8px 1rem;
 }
 
 .socials a {
     color: #DBE2EF;
+    font-size: clamp(0.8rem, 2vw, 1rem);
 }
 
 .socials li {
@@ -26,13 +27,14 @@
 .socials ul {
     display: flex;
     justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 4px 12px;
 }
 
 .contacts {
     background-color: #112D4E;
     color: #DBE2EF;
-    padding: 8px;
-
+    padding: 10px 1rem;
 }
 
 .contacts p {
@@ -45,4 +47,41 @@
     font-weight: 400;
     color: #3F72AF;
     margin-top: 3px;
+}
+
+@media screen and (max-width: 768px) {
+    .socials ul {
+        gap: 6px 16px;
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .socials {
+        padding: 10px 0.75rem;
+    }
+
+    .socials ul {
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        justify-content: center;
+    }
+
+    .socials a {
+        font-size: 0.8rem;
+    }
+
+    .contacts {
+        padding: 10px 0.75rem;
+    }
+
+    .contacts p {
+        display: block;
+        margin: 3px 0;
+        font-size: 0.8rem;
+    }
+
+    .contacts h5 {
+        font-size: 0.75rem;
+    }
 }

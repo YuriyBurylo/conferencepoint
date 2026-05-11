@@ -6,221 +6,88 @@
     padding-top: 12rem;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-}
-
-.header h2 {
-    color: #112D4E;
-    font-size: 1.8rem;
-    font-weight: 700;
-}
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; gap: 1rem; flex-wrap: wrap; }
+.header h2 { color: #112D4E; font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 700; }
 
 .submitLink {
-    padding: 0.6rem 1.5rem;
-    background: linear-gradient(135deg, #112D4E, #3F72AF);
-    color: #F9F7F7;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    padding: 0.6rem 1.5rem; background: linear-gradient(135deg, #112D4E, #3F72AF); color: #F9F7F7;
+    border-radius: 10px; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease; white-space: nowrap;
 }
-
-.submitLink:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(17, 45, 78, 0.3);
-}
+.submitLink:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(17, 45, 78, 0.3); }
 
 .empty {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(17, 45, 78, 0.1);
+    text-align: center; padding: 4rem 2rem; background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px); border-radius: 16px; box-shadow: 0 8px 32px rgba(17, 45, 78, 0.1);
 }
-
-.empty h3 {
-    color: #112D4E;
-    margin-bottom: 0.5rem;
-}
-
-.empty p {
-    color: #3F72AF;
-    margin-bottom: 1.5rem;
-}
+.empty h3 { color: #112D4E; margin-bottom: 0.5rem; }
+.empty p { color: #3F72AF; margin-bottom: 1.5rem; }
 
 .submitBtn {
-    display: inline-block;
-    padding: 0.75rem 2rem;
-    background: linear-gradient(135deg, #112D4E, #3F72AF);
-    color: #F9F7F7;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    display: inline-block; padding: 0.75rem 2rem; background: linear-gradient(135deg, #112D4E, #3F72AF);
+    color: #F9F7F7; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
 }
+.submitBtn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(17, 45, 78, 0.3); }
 
-.submitBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(17, 45, 78, 0.3);
-}
-
-.articlesList {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
+.articlesList { display: flex; flex-direction: column; gap: 1rem; }
 
 .articleCard {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    border-radius: 14px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 16px rgba(17, 45, 78, 0.1);
-    border: 1px solid rgba(63, 114, 175, 0.15);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-radius: 14px;
+    padding: 1.5rem; box-shadow: 0 4px 16px rgba(17, 45, 78, 0.1);
+    border: 1px solid rgba(63, 114, 175, 0.15); transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+.articleCard:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(17, 45, 78, 0.15); }
 
-.articleCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(17, 45, 78, 0.15);
-}
+.articleTop { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; gap: 0.5rem; flex-wrap: wrap; }
 
-.articleTop {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
+.statusBadge { display: inline-block; padding: 0.25rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em; }
+.statusPending { background: rgba(255, 193, 7, 0.15); color: #856404; }
+.statusReview { background: rgba(0, 123, 255, 0.12); color: #004085; }
+.statusAccepted { background: rgba(40, 167, 69, 0.12); color: #155724; }
+.statusRejected { background: rgba(220, 53, 69, 0.12); color: #721c24; }
+.statusRevision { background: rgba(255, 133, 27, 0.12); color: #7a4100; }
 
-.statusBadge {
-    display: inline-block;
-    padding: 0.25rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-}
-
-.statusPending {
-    background: rgba(255, 193, 7, 0.15);
-    color: #856404;
-}
-
-.statusReview {
-    background: rgba(0, 123, 255, 0.12);
-    color: #004085;
-}
-
-.statusAccepted {
-    background: rgba(40, 167, 69, 0.12);
-    color: #155724;
-}
-
-.statusRejected {
-    background: rgba(220, 53, 69, 0.12);
-    color: #721c24;
-}
-
-.statusRevision {
-    background: rgba(255, 133, 27, 0.12);
-    color: #7a4100;
-}
-
-.date {
-    font-size: 0.85rem;
-    color: #3F72AF;
-}
-
-.articleTitle {
-    color: #112D4E;
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-}
-
-.conference {
-    color: #3F72AF;
-    font-size: 0.9rem;
-    font-style: italic;
-}
-
-.section {
-    color: #666;
-    font-size: 0.85rem;
-    margin-top: 0.2rem;
-}
+.date { font-size: 0.85rem; color: #3F72AF; }
+.articleTitle { color: #112D4E; font-size: 1.15rem; font-weight: 600; margin-bottom: 0.4rem; word-break: break-word; }
+.conference { color: #3F72AF; font-size: 0.9rem; font-style: italic; }
+.section { color: #666; font-size: 0.85rem; margin-top: 0.2rem; }
 
 .adminComment {
-    margin-top: 0.75rem;
-    padding: 0.75rem;
-    background: rgba(255, 193, 7, 0.08);
-    border-radius: 8px;
-    border-left: 3px solid #ffc107;
-    font-size: 0.9rem;
+    margin-top: 0.75rem; padding: 0.75rem; background: rgba(255, 193, 7, 0.08);
+    border-radius: 8px; border-left: 3px solid #ffc107; font-size: 0.9rem;
 }
+.adminComment strong { color: #856404; font-size: 0.8rem; }
+.adminComment p { margin-top: 0.25rem; color: #112D4E; }
 
-.adminComment strong {
-    color: #856404;
-    font-size: 0.8rem;
-}
-
-.adminComment p {
-    margin-top: 0.25rem;
-    color: #112D4E;
-}
-
-.articleActions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
+.articleActions { display: flex; gap: 0.75rem; margin-top: 1rem; flex-wrap: wrap; }
 
 .downloadBtn {
-    padding: 0.5rem 1.2rem;
-    background: rgba(63, 114, 175, 0.1);
-    color: #3F72AF;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 0.5rem 1.2rem; background: rgba(63, 114, 175, 0.1); color: #3F72AF;
+    border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;
 }
-
-.downloadBtn:hover {
-    background: rgba(63, 114, 175, 0.2);
-}
+.downloadBtn:hover { background: rgba(63, 114, 175, 0.2); }
 
 .deleteBtn {
-    padding: 0.5rem 1.2rem;
-    background: rgba(220, 53, 69, 0.08);
-    color: #dc3545;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 0.5rem 1.2rem; background: rgba(220, 53, 69, 0.08); color: #dc3545;
+    border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;
 }
+.deleteBtn:hover { background: rgba(220, 53, 69, 0.18); }
 
-.deleteBtn:hover {
-    background: rgba(220, 53, 69, 0.18);
-}
+.loading { text-align: center; padding: 4rem; color: #3F72AF; font-size: 1.1rem; }
 
-.loading {
-    text-align: center;
-    padding: 4rem;
-    color: #3F72AF;
-    font-size: 1.1rem;
+@media screen and (max-width: 768px) {
+    .articlesPage { padding-top: 8rem; padding-left: 0.75rem; padding-right: 0.75rem; }
+    .articleCard { padding: 1.25rem; }
+    .articleCard:hover { transform: none; }
 }
 
 @media screen and (max-width: 580px) {
-    .header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
+    .articlesPage { padding-top: 7rem; padding-left: 0.5rem; padding-right: 0.5rem; }
+    .header { flex-direction: column; text-align: center; }
+    .submitLink { width: 100%; text-align: center; }
+    .articleCard { padding: 1rem; border-radius: 12px; }
+    .articleTop { flex-direction: column; align-items: flex-start; }
+    .articleTitle { font-size: 1rem; }
+    .articleActions { flex-direction: column; }
+    .downloadBtn, .deleteBtn { width: 100%; text-align: center; }
+    .empty { padding: 2rem 1rem; }
 }
