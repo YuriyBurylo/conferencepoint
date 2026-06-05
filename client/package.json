@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender-seo.mjs",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node http/index.security.test.js && node src/App.routes.test.js && node src/i18n/languageDetection.test.js && node src/i18n/translations.test.js && node src/utils/shareConference.test.js && node src/components/Header/Header.module.css.test.js && node src/components/Auth/Auth.module.css.test.js && node src/components/ArchiveConferences/ArchiveConferences.layout.test.js && node src/components/NewConferences/NewConferences.layout.test.js && npm run test:seo",
+    "test:seo": "node src/utils/seo.test.js && node scripts/prerender-seo.test.mjs"
   },
   "dependencies": {
     "axios": "^1.13.5",

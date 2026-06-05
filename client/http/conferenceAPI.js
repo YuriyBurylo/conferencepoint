@@ -1,4 +1,4 @@
-import { $host, $authHost } from './index';
+import { $host, $authHost, buildApiResourceUrl } from './index';
 
 export const fetchNextConference = async () => {
     const response = await $host.get('api/nextconference');
@@ -17,6 +17,11 @@ export const fetchNewConferenceById = async (id) => {
 
 export const fetchArchiveConferences = async () => {
     const response = await $host.get('api/pastconferences');
+    return response;
+};
+
+export const fetchAdminArchiveConferences = async () => {
+    const response = await $authHost.get('api/pastconferences/admin/all');
     return response;
 };
 
@@ -44,6 +49,10 @@ export const fetchArchiveConferenceMaterials = async (id) => {
     }, 1000);
 };
 
+export const getArchiveConferenceMaterialsUrl = (id) => (
+    buildApiResourceUrl(`api/pastconferences/${id}/materials`)
+);
+
 export const fetchNewConferenceMaterials = async (id) => {
     const response = await $host.get(`api/newconferences/${id}/materials`, {responseType: 'blob'});
     const blobResult = response.data;
@@ -63,7 +72,21 @@ export const fetchNewConferenceMaterials = async (id) => {
     }, 1000);
 };
 
+export const getNewConferenceMaterialsUrl = (id) => (
+    buildApiResourceUrl(`api/newconferences/${id}/materials`)
+);
+
 export const moveConferenceToArchive = async (id) => {
     const response = await $authHost.post(`api/newconferences/${id}/archive`);
+    return response.data;
+};
+
+export const updateArchiveConference = async (formData) => {
+    const response = await $authHost.put('api/pastconferences', formData);
+    return response.data;
+};
+
+export const updateNewConference = async (formData) => {
+    const response = await $authHost.put('api/newconferences', formData);
     return response.data;
 };

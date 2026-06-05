@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { updateProfile } from '../../../http/authAPI';
+import React, { useState } from 'react';
+import { useAuth } from '../../context/useAuth';
+import { useLanguage } from '../../context/useLanguage';
+import { changePassword, updateProfile } from '../../../http/authAPI';
 import styles from './Profile.module.css';
 
 function Profile() {
-    const { user, login, token } = useAuth();
+    const { user, login } = useAuth();
+    const { formatDate, t } = useLanguage();
     const [editing, setEditing] = useState(false);
     const [formData, setFormData] = useState({
         full_name: '',
@@ -12,33 +14,65 @@ function Profile() {
         scientific_degree: '',
         academic_title: ''
     });
+    const [passwordData, setPasswordData] = useState({
+        current_password: '',
+        new_password: '',
+        confirm_password: ''
+    });
     const [message, setMessage] = useState({ type: '', text: '' });
+    const [passwordSubmitting, setPasswordSubmitting] = useState(false);
 
-    useEffect(() => {
-        if (user) {
-            setFormData({
-                full_name: user.full_name || '',
-                affiliation: user.affiliation || '',
-                scientific_degree: user.scientific_degree || '',
-                academic_title: user.academic_title || ''
-            });
-        }
-    }, [user]);
+    const startEditing = () => {
+        setFormData({
+            full_name: user.full_name || '',
+            affiliation: user.affiliation || '',
+            scientific_degree: user.scientific_degree || '',
+            academic_title: user.academic_title || ''
+        });
+        setEditing(true);
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handlePasswordChange = (e) => {
+        setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const updated = await updateProfile(formData);
-            login(token, { ...user, ...updated });
+            login({ ...user, ...updated });
             setEditing(false);
-            setMessage({ type: 'success', text: 'Профіль оновлено успішно' });
+            setMessage({ type: 'success', text: t('profile.updated') });
             setTimeout(() => setMessage({ type: '', text: '' }), 3000);
-        } catch (err) {
-            setMessage({ type: 'error', text: err.response?.data?.message || 'Помилка при оновленні' });
+        } catch {
+            setMessage({ type: 'error', text: t('profile.updateError') });
+        }
+    };
+
+    const handlePasswordSubmit = async (e) => {
+        e.preventDefault();
+        if (passwordData.new_password !== passwordData.confirm_password) {
+            setMessage({ type: 'error', text: t('auth.passwordMismatch') });
+            return;
+        }
+
+        setPasswordSubmitting(true);
+        try {
+            await changePassword({
+                current_password: passwordData.current_password,
+                new_password: passwordData.new_password
+            });
+            setPasswordData({ current_password: '', new_password: '', confirm_password: '' });
+            setMessage({ type: 'success', text: t('profile.passwordChanged') });
+            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+        } catch {
+            setMessage({ type: 'error', text: t('profile.passwordChangeError') });
+        } finally {
+            setPasswordSubmitting(false);
         }
     };
 
@@ -52,7 +86,7 @@ function Profile() {
                         {user.full_name?.charAt(0)?.toUpperCase()}
                     </div>
                     <h2>{user.full_name}</h2>
-                    <span className={styles.roleBadge}>{user.role === 'admin' ? 'Адміністратор' : 'Користувач'}</span>
+                    <span className={styles.roleBadge}>{user.role === 'admin' ? t('profile.administrator') : t('profile.user')}</span>
                 </div>
 
                 {message.text && (
@@ -68,33 +102,69 @@ function Profile() {
                             <span className={styles.value}>{user.email}</span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Повне ім'я</span>
+                            <span className={styles.label}>{t('profile.fullName')}</span>
                             <span className={styles.value}>{user.full_name}</span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Установа</span>
+                            <span className={styles.label}>{t('profile.affiliation')}</span>
                             <span className={styles.value}>{user.affiliation || '—'}</span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Науковий ступінь</span>
+                            <span className={styles.label}>{t('profile.scientificDegree')}</span>
                             <span className={styles.value}>{user.scientific_degree || '—'}</span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Вчене звання</span>
+                            <span className={styles.label}>{t('profile.academicTitle')}</span>
                             <span className={styles.value}>{user.academic_title || '—'}</span>
                         </div>
                         <div className={styles.infoRow}>
-                            <span className={styles.label}>Дата реєстрації</span>
-                            <span className={styles.value}>{new Date(user.created_at).toLocaleDateString('uk-UA')}</span>
+                            <span className={styles.label}>{t('profile.registeredAt')}</span>
+                            <span className={styles.value}>{formatDate(user.created_at)}</span>
                         </div>
-                        <button className={styles.editBtn} onClick={() => setEditing(true)}>
-                            Редагувати профіль
+                        <button className={styles.editBtn} onClick={startEditing}>
+                            {t('profile.edit')}
                         </button>
+                        <form className={styles.passwordSection} onSubmit={handlePasswordSubmit}>
+                            <h3>{t('profile.changePassword')}</h3>
+                            <div className={styles.formGroup}>
+                                <label>{t('profile.currentPassword')}</label>
+                                <input
+                                    type="password"
+                                    name="current_password"
+                                    value={passwordData.current_password}
+                                    onChange={handlePasswordChange}
+                                    required
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>{t('profile.newPassword')}</label>
+                                <input
+                                    type="password"
+                                    name="new_password"
+                                    value={passwordData.new_password}
+                                    onChange={handlePasswordChange}
+                                    required
+                                />
+                            </div>
+                            <div className={styles.formGroup}>
+                                <label>{t('profile.confirmNewPassword')}</label>
+                                <input
+                                    type="password"
+                                    name="confirm_password"
+                                    value={passwordData.confirm_password}
+                                    onChange={handlePasswordChange}
+                                    required
+                                />
+                            </div>
+                            <button type="submit" className={styles.saveBtn} disabled={passwordSubmitting}>
+                                {passwordSubmitting ? t('common.loading') : t('profile.changePassword')}
+                            </button>
+                        </form>
                     </div>
                 ) : (
                     <form className={styles.editForm} onSubmit={handleSubmit}>
                         <div className={styles.formGroup}>
-                            <label>Повне ім'я</label>
+                            <label>{t('profile.fullName')}</label>
                             <input
                                 type="text"
                                 name="full_name"
@@ -104,7 +174,7 @@ function Profile() {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Установа</label>
+                            <label>{t('profile.affiliation')}</label>
                             <input
                                 type="text"
                                 name="affiliation"
@@ -113,7 +183,7 @@ function Profile() {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Науковий ступінь</label>
+                            <label>{t('profile.scientificDegree')}</label>
                             <input
                                 type="text"
                                 name="scientific_degree"
@@ -122,7 +192,7 @@ function Profile() {
                             />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Вчене звання</label>
+                            <label>{t('profile.academicTitle')}</label>
                             <input
                                 type="text"
                                 name="academic_title"
@@ -131,8 +201,8 @@ function Profile() {
                             />
                         </div>
                         <div className={styles.formActions}>
-                            <button type="submit" className={styles.saveBtn}>Зберегти</button>
-                            <button type="button" className={styles.cancelBtn} onClick={() => setEditing(false)}>Скасувати</button>
+                            <button type="submit" className={styles.saveBtn}>{t('common.save')}</button>
+                            <button type="button" className={styles.cancelBtn} onClick={() => setEditing(false)}>{t('common.cancel')}</button>
                         </div>
                     </form>
                 )}

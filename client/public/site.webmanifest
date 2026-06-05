@@ -1,0 +1,16 @@
+{
+  "name": "Conference Point",
+  "short_name": "Conference Point",
+  "description": "Наукові інтернет-конференції, подання тез та архів матеріалів.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7fbff",
+  "theme_color": "#0f8b7f",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

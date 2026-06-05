@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { fetchNewConferences, fetchArchiveConferences, fetchNewConferenceMaterials, fetchArchiveConferenceMaterials, moveConferenceToArchive } from '../../../http/conferenceAPI';
+import { fetchNewConferences, fetchAdminArchiveConferences, fetchNewConferenceMaterials, fetchArchiveConferenceMaterials, moveConferenceToArchive, updateArchiveConference, updateNewConference } from '../../../http/conferenceAPI';
 import { $authHost } from '../../../http/index';
+import { useLanguage } from '../../context/useLanguage';
 import styles from './Admin.module.css';
 
 function ManageConferences() {
+    const { t } = useLanguage();
     const [newConferences, setNewConferences] = useState([]);
     const [archiveConferences, setArchiveConferences] = useState([]);
     const [activeTab, setActiveTab] = useState('new');
     const [showForm, setShowForm] = useState(false);
-    const [formType, setFormType] = useState('new'); // 'new' or 'archive'
+    const [formType, setFormType] = useState('new');
+    const [editingConference, setEditingConference] = useState(null);
     const [formData, setFormData] = useState({
         conference_status: '',
         title: '',
@@ -25,7 +28,7 @@ function ManageConferences() {
         try {
             const [newRes, archRes] = await Promise.all([
                 fetchNewConferences(),
-                fetchArchiveConferences()
+                fetchAdminArchiveConferences()
             ]);
             setNewConferences(newRes.data);
             setArchiveConferences(archRes.data);
@@ -42,6 +45,12 @@ function ManageConferences() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const resetForm = () => {
+        setFormData({ conference_status: '', title: '', venue: '', country: '', timing: '', participants: '' });
+        setEditingConference(null);
+        setFile(null);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
@@ -55,9 +64,22 @@ function ManageConferences() {
             data.append('country', formData.country);
             data.append('timing', formData.timing);
 
-            if (formType === 'new') {
+            if (editingConference) {
+                data.append('conference_id', editingConference.conference_id);
+                if (formType === 'archive' && formData.participants) {
+                    data.append('participants', formData.participants);
+                }
+                if (file) {
+                    data.append(formType === 'new' ? 'leaflet' : 'textpdf', file);
+                }
+                if (formType === 'new') {
+                    await updateNewConference(data);
+                } else {
+                    await updateArchiveConference(data);
+                }
+            } else if (formType === 'new') {
                 if (!file) {
-                    setError('Файл листівки обов\'язковий');
+                    setError(t('admin.leafletRequired'));
                     return;
                 }
                 data.append('leaflet', file);
@@ -66,7 +88,7 @@ function ManageConferences() {
                 });
             } else {
                 if (!file) {
-                    setError('Файл матеріалів обов\'язковий');
+                    setError(t('admin.materialsRequired'));
                     return;
                 }
                 if (formData.participants) {
@@ -78,25 +100,24 @@ function ManageConferences() {
                 });
             }
 
-            setSuccess('Конференцію створено успішно');
+            setSuccess(editingConference ? t('admin.conferenceSaved') : t('admin.conferenceCreated'));
             setShowForm(false);
-            setFormData({ conference_status: '', title: '', venue: '', country: '', timing: '', participants: '' });
-            setFile(null);
+            resetForm();
             loadConferences();
         } catch (err) {
-            setError(err.response?.data?.message || 'Помилка при створенні конференції');
+            setError(err.response?.data?.message || t('admin.conferenceSaveError'));
         }
     };
 
     const handleDelete = async (id, type) => {
-        if (!window.confirm('Ви впевнені, що хочете видалити цю конференцію?')) return;
+        if (!window.confirm(t('admin.deleteConferenceConfirm'))) return;
         try {
             const endpoint = type === 'new' ? 'newconferences' : 'pastconferences';
             await $authHost.delete(`api/${endpoint}/${id}`);
             loadConferences();
-            setSuccess('Конференцію видалено');
-        } catch (err) {
-            setError('Помилка при видаленні');
+            setSuccess(t('admin.conferenceDeleted'));
+        } catch {
+            setError(t('admin.deleteError'));
         }
     };
 
@@ -107,23 +128,39 @@ function ManageConferences() {
             } else {
                 await fetchArchiveConferenceMaterials(id);
             }
-        } catch (err) {
-            setError('Помилка при завантаженні матеріалів');
+        } catch {
+            setError(t('admin.materialsDownloadError'));
         }
     };
 
     const handleMoveToArchive = async (id) => {
-        if (!window.confirm('Ви впевнені, що хочете перемістити цю конференцію в архів?')) return;
+        if (!window.confirm(t('admin.moveConfirm'))) return;
         try {
             await moveConferenceToArchive(id);
-            setSuccess('Конференцію успішно переміщено в архів');
+            setSuccess(t('admin.movedToArchive'));
             loadConferences();
         } catch (err) {
-            setError(err.response?.data?.message || 'Помилка при переміщенні в архів');
+            setError(err.response?.data?.message || t('admin.moveError'));
         }
     };
 
-    // Filters
+    const openEditForm = (conf, type) => {
+        setFormType(type);
+        setEditingConference(conf);
+        setFormData({
+            conference_status: conf.conference_status || '',
+            title: conf.title || '',
+            venue: conf.venue || '',
+            country: conf.country || '',
+            timing: conf.timing?.slice(0, 10) || '',
+            participants: Array.isArray(conf.participants) ? conf.participants.join(', ') : ''
+        });
+        setFile(null);
+        setError('');
+        setSuccess('');
+        setShowForm(true);
+    };
+
     const [nameFilter, setNameFilter] = useState('');
     const [statusFilter, setStatusFilter] = useState('');
     const [countryFilter, setCountryFilter] = useState('');
@@ -132,20 +169,24 @@ function ManageConferences() {
 
     const conferences = activeTab === 'new' ? newConferences : archiveConferences;
 
-    const filteredConferences = useMemo(() => {
-        return conferences.filter(conf => {
+    const filteredConferences = useMemo(() => (
+        conferences.filter(conf => {
             if (nameFilter && !conf.title?.toLowerCase().includes(nameFilter.toLowerCase())) return false;
             if (statusFilter && !conf.conference_status?.toLowerCase().includes(statusFilter.toLowerCase())) return false;
             if (countryFilter && !conf.country?.toLowerCase().includes(countryFilter.toLowerCase())) return false;
             if (cityFilter && !conf.venue?.toLowerCase().includes(cityFilter.toLowerCase())) return false;
             if (dateFilter && conf.timing?.slice(0, 10) !== dateFilter) return false;
             return true;
-        });
-    }, [conferences, nameFilter, statusFilter, countryFilter, cityFilter, dateFilter]);
+        })
+    ), [conferences, nameFilter, statusFilter, countryFilter, cityFilter, dateFilter]);
+
+    const formTitle = editingConference
+        ? (formType === 'new' ? t('admin.editCurrentConference') : t('admin.editArchiveConference'))
+        : (formType === 'new' ? t('admin.newCurrentConference') : t('admin.newArchiveConference'));
 
     return (
         <div className={styles.adminPage}>
-            <h2 className={styles.pageTitle}>Управління конференціями</h2>
+            <h2 className={styles.pageTitle}>{t('admin.manageConferences')}</h2>
 
             {error && <div className={styles.errorMsg}>{error}</div>}
             {success && <div className={styles.successMsg}>{success}</div>}
@@ -156,110 +197,77 @@ function ManageConferences() {
                         className={`${styles.tab} ${activeTab === 'new' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('new')}
                     >
-                        Актуальні ({newConferences.length})
+                        {t('admin.current')} ({newConferences.length})
                     </button>
                     <button
                         className={`${styles.tab} ${activeTab === 'archive' ? styles.tabActive : ''}`}
                         onClick={() => setActiveTab('archive')}
                     >
-                        Архів ({archiveConferences.length})
+                        {t('nav.archive')} ({archiveConferences.length})
                     </button>
                 </div>
                 <button
                     className={styles.addBtn}
                     onClick={() => {
                         setFormType(activeTab === 'new' ? 'new' : 'archive');
+                        resetForm();
                         setShowForm(!showForm);
                     }}
                 >
-                    {showForm ? 'Скасувати' : '+ Додати конференцію'}
+                    {showForm ? t('common.cancel') : t('admin.addConference')}
                 </button>
             </div>
 
             <div className={styles.toolbar}>
-                <div className={styles.filterGroup} style={{flexWrap: 'wrap'}}>
-                    <input
-                        type="text"
-                        placeholder="Пошук за назвою..."
-                        value={nameFilter}
-                        onChange={(e) => setNameFilter(e.target.value)}
-                        className={styles.searchInput}
-                        style={{minWidth: '180px'}}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Статус..."
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className={styles.searchInput}
-                        style={{minWidth: '140px'}}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Місто..."
-                        value={cityFilter}
-                        onChange={(e) => setCityFilter(e.target.value)}
-                        className={styles.searchInput}
-                        style={{minWidth: '120px'}}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Країна..."
-                        value={countryFilter}
-                        onChange={(e) => setCountryFilter(e.target.value)}
-                        className={styles.searchInput}
-                        style={{minWidth: '120px'}}
-                    />
-                    <div style={{display: 'flex', alignItems: 'center', gap: '0.4rem'}}>
-                        <label style={{fontSize: '0.85rem', color: '#112D4E', whiteSpace: 'nowrap'}}>Дата:</label>
-                        <input
-                            type="date"
-                            value={dateFilter}
-                            onChange={(e) => setDateFilter(e.target.value)}
-                            className={styles.searchInput}
-                            style={{minWidth: 'auto', padding: '0.55rem'}}
-                        />
+                <div className={styles.filterGroup} style={{ flexWrap: 'wrap' }}>
+                    <input type="text" placeholder={t('admin.searchByTitle')} value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} className={styles.searchInput} style={{ minWidth: '180px' }} />
+                    <input type="text" placeholder={t('admin.statusPlaceholder')} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className={styles.searchInput} style={{ minWidth: '140px' }} />
+                    <input type="text" placeholder={t('admin.cityPlaceholder')} value={cityFilter} onChange={(e) => setCityFilter(e.target.value)} className={styles.searchInput} style={{ minWidth: '120px' }} />
+                    <input type="text" placeholder={t('admin.countryPlaceholder')} value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)} className={styles.searchInput} style={{ minWidth: '120px' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <label style={{ fontSize: '0.85rem', color: '#112D4E', whiteSpace: 'nowrap' }}>{t('common.date')}:</label>
+                        <input type="date" value={dateFilter} onChange={(e) => setDateFilter(e.target.value)} className={styles.searchInput} style={{ minWidth: 'auto', padding: '0.55rem' }} />
                     </div>
                 </div>
-                <span className={styles.count}>Знайдено: {filteredConferences.length}</span>
+                <span className={styles.count}>{t('common.found', { count: filteredConferences.length })}</span>
             </div>
 
             {showForm && (
                 <form className={styles.createForm} onSubmit={handleSubmit}>
-                    <h3>Нова {formType === 'new' ? 'актуальна' : 'архівна'} конференція</h3>
+                    <h3>{formTitle}</h3>
                     <div className={styles.formGrid}>
                         <div className={styles.formGroup}>
-                            <label>Статус</label>
-                            <input type="text" name="conference_status" value={formData.conference_status} onChange={handleChange} placeholder="напр. Прийом тез" required />
+                            <label>{t('common.status')}</label>
+                            <input type="text" name="conference_status" value={formData.conference_status} onChange={handleChange} placeholder={t('admin.statusExample')} required />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Назва</label>
-                            <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Назва конференції" required />
+                            <label>{t('common.title')}</label>
+                            <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder={t('admin.conferenceTitlePlaceholder')} required />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Місце проведення</label>
-                            <input type="text" name="venue" value={formData.venue} onChange={handleChange} placeholder="напр. Київ" required />
+                            <label>{t('admin.place')}</label>
+                            <input type="text" name="venue" value={formData.venue} onChange={handleChange} placeholder={t('admin.placePlaceholder')} required />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Країна</label>
-                            <input type="text" name="country" value={formData.country} onChange={handleChange} placeholder="напр. Україна" required />
+                            <label>{t('common.country')}</label>
+                            <input type="text" name="country" value={formData.country} onChange={handleChange} placeholder={t('admin.countryPlaceholder')} required />
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Дата</label>
+                            <label>{t('common.date')}</label>
                             <input type="date" name="timing" value={formData.timing} onChange={handleChange} required />
                         </div>
                         {formType === 'archive' && (
                             <div className={styles.formGroup}>
-                                <label>Учасники (через кому)</label>
-                                <input type="text" name="participants" value={formData.participants} onChange={handleChange} placeholder="Учасники" />
+                                <label>{t('admin.participants')}</label>
+                                <input type="text" name="participants" value={formData.participants} onChange={handleChange} placeholder={t('admin.participantsPlaceholder')} />
                             </div>
                         )}
                         <div className={styles.formGroup}>
-                            <label>{formType === 'new' ? 'Листівка (PDF)' : 'Матеріали (PDF)'}</label>
-                            <input type="file" accept=".pdf" onChange={(e) => setFile(e.target.files[0])} />
+                            <label>{formType === 'new' ? t('admin.leaflet') : t('admin.materials')}</label>
+                            <input type="file" accept=".pdf" onChange={(e) => setFile(e.target.files[0])} required={!editingConference} />
                         </div>
                     </div>
-                    <button type="submit" className={styles.submitFormBtn}>Створити</button>
+                    <button type="submit" className={styles.submitFormBtn}>{editingConference ? t('common.save') : t('common.create')}</button>
                 </form>
             )}
 
@@ -268,12 +276,12 @@ function ManageConferences() {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Назва</th>
-                            <th>Статус</th>
-                            <th>Місто</th>
-                            <th>Країна</th>
-                            <th>Дата</th>
-                            <th>Дії</th>
+                            <th>{t('common.title')}</th>
+                            <th>{t('common.status')}</th>
+                            <th>{t('common.city')}</th>
+                            <th>{t('common.country')}</th>
+                            <th>{t('common.date')}</th>
+                            <th>{t('common.actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -281,38 +289,46 @@ function ManageConferences() {
                             <tr key={conf.conference_id}>
                                 <td>{conf.conference_id}</td>
                                 <td className={styles.titleCell}>{conf.title}</td>
-                                <td>{conf.conference_status}</td>
+                                <td>
+                                    {conf.conference_status}
+                                    {activeTab === 'archive' && !conf.is_published && (
+                                        <div className={styles.subText}>{t('admin.draft')}</div>
+                                    )}
+                                </td>
                                 <td>{conf.venue}</td>
                                 <td>{conf.country}</td>
                                 <td>{conf.timing?.slice(0, 10).split('-').reverse().join('.')}</td>
                                 <td>
                                     <div className={styles.actionBtns}>
-                                        <button
-                                            className={styles.downloadTableBtn}
-                                            onClick={() => handleDownload(conf.conference_id, activeTab)}
-                                        >
-                                            Завантажити
-                                        </button>
-                                        {activeTab === 'new' && (
-                                            <button
-                                                className={styles.reviewBtn}
-                                                onClick={() => handleMoveToArchive(conf.conference_id)}
-                                            >
-                                                В архів
+                                        {(activeTab === 'new' || conf.is_published) && (
+                                            <button className={styles.downloadTableBtn} onClick={() => handleDownload(conf.conference_id, activeTab)}>
+                                                {t('common.download')}
                                             </button>
                                         )}
-                                        <button
-                                            className={styles.deleteTableBtn}
-                                            onClick={() => handleDelete(conf.conference_id, activeTab)}
-                                        >
-                                            Видалити
+                                        {activeTab === 'new' && (
+                                            <button className={styles.reviewBtn} onClick={() => openEditForm(conf, 'new')}>
+                                                {t('common.edit')}
+                                            </button>
+                                        )}
+                                        {activeTab === 'new' && (
+                                            <button className={styles.reviewBtn} onClick={() => handleMoveToArchive(conf.conference_id)}>
+                                                {t('admin.moveToArchive')}
+                                            </button>
+                                        )}
+                                        {activeTab === 'archive' && (
+                                            <button className={styles.reviewBtn} onClick={() => openEditForm(conf, 'archive')}>
+                                                {t('common.edit')}
+                                            </button>
+                                        )}
+                                        <button className={styles.deleteTableBtn} onClick={() => handleDelete(conf.conference_id, activeTab)}>
+                                            {t('common.delete')}
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         ))}
                         {filteredConferences.length === 0 && (
-                            <tr><td colSpan="7" className={styles.emptyRow}>Немає конференцій</td></tr>
+                            <tr><td colSpan="7" className={styles.emptyRow}>{t('admin.noConferences')}</td></tr>
                         )}
                     </tbody>
                 </table>

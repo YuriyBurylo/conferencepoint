@@ -10,6 +10,11 @@ export const loginUser = async (data) => {
     return response.data;
 };
 
+export const logoutUser = async () => {
+    const response = await $host.post('api/auth/logout');
+    return response.data;
+};
+
 export const getProfile = async () => {
     const response = await $authHost.get('api/auth/profile');
     return response.data;
@@ -17,6 +22,21 @@ export const getProfile = async () => {
 
 export const updateProfile = async (data) => {
     const response = await $authHost.put('api/auth/profile', data);
+    return response.data;
+};
+
+export const changePassword = async (data) => {
+    const response = await $authHost.put('api/auth/password', data);
+    return response.data;
+};
+
+export const requestPasswordReset = async (data) => {
+    const response = await $host.post('api/auth/password-reset/request', data);
+    return response.data;
+};
+
+export const resetPassword = async (data) => {
+    const response = await $host.post('api/auth/password-reset/confirm', data);
     return response.data;
 };
 

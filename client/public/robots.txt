@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /my-articles
+Disallow: /submit-article
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://conferencepoint.online/sitemap.xml

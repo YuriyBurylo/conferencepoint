@@ -1,15 +1,21 @@
 .footer {
     text-align: center;
+    width: 100%;
+    min-width: 0;
 }
 
 .socials {
-    background-color: #3F72AF;
-    padding: 8px 1rem;
+    background: var(--glass-bg-dark);
+    backdrop-filter: var(--glass-blur);
+    border-top: 1px solid var(--glass-border-dark);
+    border-bottom: 1px solid var(--glass-border-dark);
+    padding: 12px 1rem;
 }
 
 .socials a {
-    color: #DBE2EF;
-    font-size: clamp(0.8rem, 2vw, 1rem);
+    color: var(--color-text-main);
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .socials li {
@@ -17,11 +23,15 @@
 }
 
 .socials li:hover {
-    transform: scale(1.2);
+    transform: translateY(-2px);
+}
+
+.socials a:hover {
+    color: var(--color-accent);
 }
 
 .socials a:active {
-    color: goldenrod;
+    color: var(--color-accent-hover);
 }
 
 .socials ul {
@@ -29,24 +39,29 @@
     justify-content: space-around;
     flex-wrap: wrap;
     gap: 4px 12px;
+    min-width: 0;
 }
 
 .contacts {
-    background-color: #112D4E;
-    color: #DBE2EF;
-    padding: 10px 1rem;
+    background: #ffffff;
+    backdrop-filter: var(--glass-blur);
+    color: var(--color-text-main);
+    padding: 16px 1rem;
 }
 
 .contacts p {
     display: inline-block;
-    margin: 0 6px;
-    font-size: 0.9rem;
+    margin: 0 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    max-width: 100%;
 }
 
 .contacts h5 {
-    font-weight: 400;
-    color: #3F72AF;
-    margin-top: 3px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-top: 8px;
+    letter-spacing: 0.05em;
 }
 
 @media screen and (max-width: 768px) {

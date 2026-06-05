@@ -1,85 +1,84 @@
 .container {
     text-align: center;
+    width: 100%;
+    min-width: 0;
     height: auto;
-    padding: 1.5rem 2rem;    
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(63, 114, 175, 0.15);
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(17, 45, 78, 0.1);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    padding: 2rem 2.5rem;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .container:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 28px rgba(17, 45, 78, 0.15);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-floating);
 }
 
 .status {
     margin-top: 0.5rem;
-    font-style: italic;
-    font-weight: 400;
-    color: #3F72AF;
+    font-weight: 500;
+    color: var(--color-accent);
     font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .title {
     margin-top: 0.75rem;
-    color: #112D4E;
-    font-size: clamp(1.05rem, 2.5vw, 1.4rem);
-    font-weight: 700;
-    letter-spacing: -0.01em;
+    color: var(--color-text-main);
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 0;
     word-break: break-word;
 }
 
-.country {
-    margin-top: 0.75rem;
+.country, .venue {
+    margin-top: 0.5rem;
     font-size: 1.05rem;
-    font-style: italic;
-    color: #3F72AF;
-}
-
-.venue {
-    margin-top: 0.3rem;
-    font-size: 1.05rem;
-    font-style: italic;
-    color: #3F72AF;
+    color: var(--color-text-muted);
 }
 
 .timing {
-    margin-top: 0.3rem;
+    margin-top: 0.75rem;
     font-size: 1.1rem;
     font-weight: 600;
-    color: #112D4E;
+    color: var(--color-text-main);
 }
 
 .downloadButton {
-    margin-top: 1.2rem;
-    padding: 0.8rem 2rem;
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0.85rem 2.5rem;
     min-width: 280px;
-    background: linear-gradient(135deg, #1a6b3c, #28a745);
+    max-width: 100%;
+    background: linear-gradient(135deg, var(--color-gradient-start), var(--color-gradient-end));
     color: #fff;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.03em;
-    border-radius: 10px;
+    border-radius: var(--radius-full);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    white-space: normal;
 }
 
 .downloadButton:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.35);
+    box-shadow: var(--shadow-glow);
 }
 
 .downloadButton:active {
-    transform: translateY(0);
+    transform: translateY(1px);
 }
 
 @media screen and (max-width: 768px) {
     .container {
         padding: 1.25rem 1.25rem;
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
     }
 
     .container:hover {

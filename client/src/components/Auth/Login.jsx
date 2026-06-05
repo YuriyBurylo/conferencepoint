@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../../../http/authAPI';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../context/useAuth';
+import { useLanguage } from '../../context/useLanguage';
+import Seo from '../Seo/Seo';
 import styles from './Auth.module.css';
 
 function Login() {
@@ -11,6 +13,7 @@ function Login() {
     const [submitting, setSubmitting] = useState(false);
     const navigate = useNavigate();
     const { login } = useAuth();
+    const { t } = useLanguage();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,10 +22,10 @@ function Login() {
 
         try {
             const data = await loginUser({ email, password });
-            login(data.token, data.user);
+            login(data.user);
             navigate('/');
-        } catch (err) {
-            setError(err.response?.data?.message || 'Помилка при вході');
+        } catch {
+            setError(t('auth.loginError'));
         } finally {
             setSubmitting(false);
         }
@@ -30,10 +33,16 @@ function Login() {
 
     return (
         <div className={styles.authPage}>
+            <Seo
+                title={t('seo.loginTitle')}
+                description={t('seo.loginDescription')}
+                path="/login"
+                noindex
+            />
             <div className={styles.authCard}>
                 <div className={styles.authHeader}>
-                    <h2>Вхід</h2>
-                    <p>Увійдіть до свого облікового запису</p>
+                    <h1>{t('auth.loginTitle')}</h1>
+                    <p>{t('auth.loginSubtitle')}</p>
                 </div>
                 <form className={styles.authForm} onSubmit={handleSubmit}>
                     {error && <div className={styles.error}>{error}</div>}
@@ -49,13 +58,13 @@ function Login() {
                         />
                     </div>
                     <div className={styles.formGroup}>
-                        <label htmlFor="login-password">Пароль</label>
+                        <label htmlFor="login-password">{t('common.password')}</label>
                         <input
                             id="login-password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Мінімум 6 символів"
+                            placeholder={t('auth.passwordMin')}
                             required
                         />
                     </div>
@@ -64,11 +73,12 @@ function Login() {
                         className={styles.submitBtn}
                         disabled={submitting}
                     >
-                        {submitting ? 'Завантаження...' : 'Увійти'}
+                        {submitting ? t('auth.loginLoading') : t('auth.loginButton')}
                     </button>
                 </form>
                 <div className={styles.authFooter}>
-                    <p>Немає облікового запису? <Link to="/register">Зареєструватися</Link></p>
+                    <p><Link to="/forgot-password">{t('auth.forgotPassword')}</Link></p>
+                    <p>{t('auth.noAccount')} <Link to="/register">{t('auth.registerLink')}</Link></p>
                 </div>
             </div>
         </div>

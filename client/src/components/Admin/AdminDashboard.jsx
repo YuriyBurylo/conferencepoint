@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import { getAllUsers } from '../../../http/authAPI';
 import { getAllArticles } from '../../../http/articlesAPI';
 import { fetchNewConferences, fetchArchiveConferences } from '../../../http/conferenceAPI';
+import { useLanguage } from '../../context/useLanguage';
 import styles from './Admin.module.css';
 
 function AdminDashboard() {
+    const { t } = useLanguage();
     const [stats, setStats] = useState({
         users: 0,
         newConferences: 0,
@@ -44,52 +46,41 @@ function AdminDashboard() {
     }, []);
 
     if (loading) {
-        return <div className={styles.adminPage}><div className={styles.loading}>Завантаження...</div></div>;
+        return <div className={styles.adminPage}><div className={styles.loading}>{t('common.loading')}</div></div>;
     }
 
     return (
         <div className={styles.adminPage}>
-            <h2 className={styles.pageTitle}>Панель адміністратора</h2>
+            <h2 className={styles.pageTitle}>{t('admin.dashboardTitle')}</h2>
 
             <div className={styles.statsGrid}>
-                <div className={styles.statCard}>
-                    <div className={styles.statNumber}>{stats.users}</div>
-                    <div className={styles.statLabel}>Користувачів</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statNumber}>{stats.newConferences}</div>
-                    <div className={styles.statLabel}>Актуальних конференцій</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statNumber}>{stats.archiveConferences}</div>
-                    <div className={styles.statLabel}>В архіві</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statNumber}>{stats.totalArticles}</div>
-                    <div className={styles.statLabel}>Всього статей</div>
-                </div>
-                <div className={`${styles.statCard} ${styles.statHighlight}`}>
-                    <div className={styles.statNumber}>{stats.pendingArticles}</div>
-                    <div className={styles.statLabel}>Очікують розгляду</div>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statNumber}>{stats.acceptedArticles}</div>
-                    <div className={styles.statLabel}>Прийнято</div>
-                </div>
+                {[
+                    ['users', t('admin.users')],
+                    ['newConferences', t('admin.currentConferences')],
+                    ['archiveConferences', t('admin.inArchive')],
+                    ['totalArticles', t('admin.totalArticles')],
+                    ['pendingArticles', t('admin.pendingArticles')],
+                    ['acceptedArticles', t('admin.acceptedArticles')]
+                ].map(([key, label]) => (
+                    <div className={`${styles.statCard} ${key === 'pendingArticles' ? styles.statHighlight : ''}`} key={key}>
+                        <div className={styles.statNumber}>{stats[key]}</div>
+                        <div className={styles.statLabel}>{label}</div>
+                    </div>
+                ))}
             </div>
 
             <div className={styles.adminNav}>
                 <Link to="/admin/conferences" className={styles.adminNavCard}>
-                    <h3>Конференції</h3>
-                    <p>Створення, редагування та управління конференціями</p>
+                    <h3>{t('admin.conferencesTitle')}</h3>
+                    <p>{t('admin.conferencesText')}</p>
                 </Link>
                 <Link to="/admin/articles" className={styles.adminNavCard}>
-                    <h3>Статті</h3>
-                    <p>Перегляд та рецензування поданих статей</p>
+                    <h3>{t('admin.articlesTitle')}</h3>
+                    <p>{t('admin.articlesText')}</p>
                 </Link>
                 <Link to="/admin/users" className={styles.adminNavCard}>
-                    <h3>Користувачі</h3>
-                    <p>Управління користувачами та ролями</p>
+                    <h3>{t('admin.usersTitle')}</h3>
+                    <p>{t('admin.usersText')}</p>
                 </Link>
             </div>
         </div>

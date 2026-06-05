@@ -5,6 +5,7 @@ const { adminMiddleware } = require('../middleware/authMiddleware');
 
 // Public routes
 archiveConferencesRouter.get('/', archiveConferencesController.getConferences);
+archiveConferencesRouter.get('/admin/all', adminMiddleware, archiveConferencesController.getAdminConferences);
 archiveConferencesRouter.get('/:id', archiveConferencesController.getConferenceById);
 archiveConferencesRouter.get('/:id/materials', archiveConferencesController.getConferenceMaterials);
 

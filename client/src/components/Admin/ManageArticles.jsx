@@ -1,25 +1,24 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getAllArticles, reviewArticle, downloadArticle, downloadReceipt, downloadAllArticles } from '../../../http/articlesAPI';
+import { useLanguage } from '../../context/useLanguage';
 import styles from './Admin.module.css';
 
-const STATUS_OPTIONS = [
-    { value: '', label: 'Всі статуси' },
-    { value: 'pending', label: 'Очікує розгляду' },
-    { value: 'under_review', label: 'На рецензії' },
-    { value: 'accepted', label: 'Прийнято' },
-    { value: 'rejected', label: 'Відхилено' },
-    { value: 'revision_needed', label: 'Потрібна доопрацювання' },
-];
+const STATUS_VALUES = ['', 'pending', 'under_review', 'accepted', 'rejected', 'revision_needed'];
 
 const STATUS_CLASSES = {
-    'pending': 'statusPending',
-    'under_review': 'statusReview',
-    'accepted': 'statusAccepted',
-    'rejected': 'statusRejected',
-    'revision_needed': 'statusRevision',
+    pending: 'statusPending',
+    under_review: 'statusReview',
+    accepted: 'statusAccepted',
+    rejected: 'statusRejected',
+    revision_needed: 'statusRevision',
 };
 
 function ManageArticles() {
+    const { formatDate, t } = useLanguage();
+    const statusOptions = STATUS_VALUES.map(value => ({
+        value,
+        label: value ? t(`status.${value}`) : t('status.all')
+    }));
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState('');
@@ -33,7 +32,7 @@ function ManageArticles() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
-    const loadArticles = async () => {
+    const loadArticles = useCallback(async () => {
         try {
             const filters = {};
             if (statusFilter) filters.status = statusFilter;
@@ -48,11 +47,11 @@ function ManageArticles() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [statusFilter, authorFilter, confDateFilter, subDateFilter, receiptFilter]);
 
     useEffect(() => {
         loadArticles();
-    }, [statusFilter, authorFilter, confDateFilter, subDateFilter, receiptFilter]);
+    }, [loadArticles]);
 
     const openReview = (article) => {
         setReviewModal(article);
@@ -63,28 +62,28 @@ function ManageArticles() {
         setError('');
         try {
             await reviewArticle(reviewModal.article_id, reviewData);
-            setSuccess('Статус оновлено');
+            setSuccess(t('admin.statusUpdated'));
             setReviewModal(null);
             loadArticles();
             setTimeout(() => setSuccess(''), 3000);
         } catch (err) {
-            setError(err.response?.data?.message || 'Помилка при оновленні');
+            setError(err.response?.data?.message || t('admin.statusUpdateError'));
         }
     };
 
     const handleDownload = async (id, fileName) => {
         try {
             await downloadArticle(id, fileName);
-        } catch (err) {
-            alert('Помилка при завантаженні');
+        } catch {
+            alert(t('admin.downloadError'));
         }
     };
 
     const handleReceiptDownload = async (id, fileName) => {
         try {
             await downloadReceipt(id, fileName);
-        } catch (err) {
-            alert('Помилка при завантаженні квитанції');
+        } catch {
+            alert(t('admin.receiptDownloadError'));
         }
     };
 
@@ -98,12 +97,12 @@ function ManageArticles() {
             if (receiptFilter) filters.has_receipt = receiptFilter;
             await downloadAllArticles(filters);
         } catch (err) {
-            alert(err.response?.status === 404 ? 'Немає статей для завантаження' : 'Помилка при завантаженні');
+            alert(err.response?.status === 404 ? t('admin.noArticlesToDownload') : t('admin.downloadError'));
         }
     };
 
     if (loading) {
-        return <div className={styles.adminPage}><div className={styles.loading}>Завантаження...</div></div>;
+        return <div className={styles.adminPage}><div className={styles.loading}>{t('common.loading')}</div></div>;
     }
 
     const filteredArticles = articles.filter(a =>
@@ -112,77 +111,77 @@ function ManageArticles() {
 
     return (
         <div className={styles.adminPage}>
-            <h2 className={styles.pageTitle}>Управління статтями</h2>
+            <h2 className={styles.pageTitle}>{t('admin.manageArticles')}</h2>
 
             {error && <div className={styles.errorMsg}>{error}</div>}
             {success && <div className={styles.successMsg}>{success}</div>}
 
             <div className={styles.toolbar}>
-                <div className={styles.filterGroup} style={{flexWrap: 'wrap'}}>
+                <div className={styles.filterGroup} style={{ flexWrap: 'wrap' }}>
                     <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                        {STATUS_OPTIONS.map(opt => (
+                        {statusOptions.map(opt => (
                             <option key={opt.value} value={opt.value}>{opt.label}</option>
                         ))}
                     </select>
 
-                    <input 
-                        type="text" 
-                        placeholder="Пошук за назвою статті..." 
-                        value={titleFilter} 
-                        onChange={(e) => setTitleFilter(e.target.value)} 
+                    <input
+                        type="text"
+                        placeholder={t('admin.searchTitle')}
+                        value={titleFilter}
+                        onChange={(e) => setTitleFilter(e.target.value)}
                         className={styles.searchInput}
-                        style={{minWidth: '200px'}}
-                    />
-                    
-                    <input 
-                        type="text" 
-                        placeholder="Пошук за автором або email..." 
-                        value={authorFilter} 
-                        onChange={(e) => setAuthorFilter(e.target.value)} 
-                        className={styles.searchInput}
-                        style={{minWidth: '200px'}}
+                        style={{ minWidth: '200px' }}
                     />
 
-                    <div style={{display: 'flex', alignItems: 'center', gap: '0.4rem'}}>
-                        <label style={{fontSize: '0.85rem', color: '#112D4E', whiteSpace: 'nowrap'}}>Дата конф.:</label>
-                        <input 
-                            type="date" 
-                            value={confDateFilter} 
-                            onChange={(e) => setConfDateFilter(e.target.value)} 
+                    <input
+                        type="text"
+                        placeholder={t('admin.searchAuthor')}
+                        value={authorFilter}
+                        onChange={(e) => setAuthorFilter(e.target.value)}
+                        className={styles.searchInput}
+                        style={{ minWidth: '200px' }}
+                    />
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <label style={{ fontSize: '0.85rem', color: '#112D4E', whiteSpace: 'nowrap' }}>{t('admin.conferenceDateShort')}</label>
+                        <input
+                            type="date"
+                            value={confDateFilter}
+                            onChange={(e) => setConfDateFilter(e.target.value)}
                             className={styles.searchInput}
-                            style={{minWidth: 'auto', padding: '0.55rem'}}
+                            style={{ minWidth: 'auto', padding: '0.55rem' }}
                         />
                     </div>
 
-                    <div style={{display: 'flex', alignItems: 'center', gap: '0.4rem'}}>
-                        <label style={{fontSize: '0.85rem', color: '#112D4E', whiteSpace: 'nowrap'}}>Подання:</label>
-                        <input 
-                            type="date" 
-                            value={subDateFilter} 
-                            onChange={(e) => setSubDateFilter(e.target.value)} 
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <label style={{ fontSize: '0.85rem', color: '#112D4E', whiteSpace: 'nowrap' }}>{t('admin.submissionDate')}</label>
+                        <input
+                            type="date"
+                            value={subDateFilter}
+                            onChange={(e) => setSubDateFilter(e.target.value)}
                             className={styles.searchInput}
-                            style={{minWidth: 'auto', padding: '0.55rem'}}
+                            style={{ minWidth: 'auto', padding: '0.55rem' }}
                         />
                     </div>
 
                     <select value={receiptFilter} onChange={(e) => setReceiptFilter(e.target.value)}>
-                        <option value="">Квитанція: Всі</option>
-                        <option value="yes">Є квитанція</option>
-                        <option value="no">Немає квитанції</option>
+                        <option value="">{t('admin.receiptAll')}</option>
+                        <option value="yes">{t('admin.hasReceipt')}</option>
+                        <option value="no">{t('admin.noReceipt')}</option>
                     </select>
                 </div>
-                <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
-                    <span className={styles.count}>Знайдено: {filteredArticles.length}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span className={styles.count}>{t('common.found', { count: filteredArticles.length })}</span>
                     <button
                         className={styles.addBtn}
                         onClick={handleDownloadAll}
                         disabled={filteredArticles.length === 0}
                         style={filteredArticles.length === 0
-                            ? {opacity: 0.5, cursor: 'not-allowed', background: 'linear-gradient(135deg, #155724, #28a745)'}
-                            : {background: 'linear-gradient(135deg, #155724, #28a745)'}
+                            ? { opacity: 0.5, cursor: 'not-allowed', background: 'linear-gradient(135deg, #155724, #28a745)' }
+                            : { background: 'linear-gradient(135deg, #155724, #28a745)' }
                         }
                     >
-                        ⬇ Завантажити всі ({filteredArticles.length})
+                        ↓ {t('admin.downloadAll', { count: filteredArticles.length })}
                     </button>
                 </div>
             </div>
@@ -192,14 +191,14 @@ function ManageArticles() {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Назва</th>
-                            <th>Автор</th>
-                            <th>Конференція</th>
-                            <th>Дата конференції</th>
-                            <th>Статус</th>
-                            <th>Дата подання</th>
-                            <th>КВИТАНЦІЯ</th>
-                            <th>Дії</th>
+                            <th>{t('admin.articleName')}</th>
+                            <th>{t('admin.author')}</th>
+                            <th>{t('admin.conference')}</th>
+                            <th>{t('admin.conferenceDate')}</th>
+                            <th>{t('common.status')}</th>
+                            <th>{t('admin.submittedAt')}</th>
+                            <th>{t('admin.receipt')}</th>
+                            <th>{t('common.actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -212,24 +211,24 @@ function ManageArticles() {
                                     <div className={styles.subText}>{article.author_email}</div>
                                 </td>
                                 <td>{article.conference_title || '—'}</td>
-                                <td>{article.conference_date ? new Date(article.conference_date).toLocaleDateString('uk-UA') : '—'}</td>
+                                <td>{article.conference_date ? formatDate(article.conference_date) : '—'}</td>
                                 <td>
                                     <span className={`${styles.badge} ${styles[STATUS_CLASSES[article.status]]}`}>
-                                        {STATUS_OPTIONS.find(s => s.value === article.status)?.label || article.status}
+                                        {t(`status.${article.status}`)}
                                     </span>
                                 </td>
-                                <td>{new Date(article.submitted_at).toLocaleDateString('uk-UA')}</td>
+                                <td>{formatDate(article.submitted_at)}</td>
                                 <td>
                                     {article.receipt_name ? (
                                         <button
                                             className={styles.downloadTableBtn}
-                                            style={{background: 'rgba(255, 193, 7, 0.1)', color: '#856404'}}
+                                            style={{ background: 'rgba(255, 193, 7, 0.1)', color: '#856404' }}
                                             onClick={() => handleReceiptDownload(article.article_id, article.receipt_name)}
                                         >
-                                            Завантажити
+                                            {t('common.download')}
                                         </button>
                                     ) : (
-                                        <span style={{color: '#999', fontSize: '0.85rem'}}>—</span>
+                                        <span style={{ color: '#999', fontSize: '0.85rem' }}>—</span>
                                     )}
                                 </td>
                                 <td>
@@ -238,20 +237,20 @@ function ManageArticles() {
                                             className={styles.reviewBtn}
                                             onClick={() => openReview(article)}
                                         >
-                                            Рецензувати
+                                            {t('common.review')}
                                         </button>
                                         <button
                                             className={styles.downloadTableBtn}
                                             onClick={() => handleDownload(article.article_id, article.file_name)}
                                         >
-                                            Завантажити
+                                            {t('common.download')}
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         ))}
                         {filteredArticles.length === 0 && (
-                            <tr><td colSpan="9" className={styles.emptyRow}>Немає статей</td></tr>
+                            <tr><td colSpan="9" className={styles.emptyRow}>{t('admin.noArticles')}</td></tr>
                         )}
                     </tbody>
                 </table>
@@ -260,32 +259,32 @@ function ManageArticles() {
             {reviewModal && (
                 <div className={styles.modalOverlay} onClick={() => setReviewModal(null)}>
                     <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                        <h3>Рецензування: {reviewModal.title}</h3>
-                        <p className={styles.modalAuthor}>Автор: {reviewModal.author_name} ({reviewModal.author_email})</p>
+                        <h3>{t('admin.reviewTitle', { title: reviewModal.title })}</h3>
+                        <p className={styles.modalAuthor}>{t('admin.reviewAuthor', { name: reviewModal.author_name, email: reviewModal.author_email })}</p>
 
                         <div className={styles.formGroup}>
-                            <label>Статус</label>
+                            <label>{t('common.status')}</label>
                             <select
                                 value={reviewData.status}
                                 onChange={(e) => setReviewData({ ...reviewData, status: e.target.value })}
                             >
-                                {STATUS_OPTIONS.filter(s => s.value).map(opt => (
+                                {statusOptions.filter(s => s.value).map(opt => (
                                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                             </select>
                         </div>
                         <div className={styles.formGroup}>
-                            <label>Коментар рецензента</label>
+                            <label>{t('admin.reviewComment')}</label>
                             <textarea
                                 value={reviewData.admin_comment}
                                 onChange={(e) => setReviewData({ ...reviewData, admin_comment: e.target.value })}
                                 rows={4}
-                                placeholder="Залишіть коментар для автора..."
+                                placeholder={t('admin.reviewPlaceholder')}
                             />
                         </div>
                         <div className={styles.modalActions}>
-                            <button className={styles.submitFormBtn} onClick={handleReview}>Зберегти</button>
-                            <button className={styles.cancelFormBtn} onClick={() => setReviewModal(null)}>Скасувати</button>
+                            <button className={styles.submitFormBtn} onClick={handleReview}>{t('common.save')}</button>
+                            <button className={styles.cancelFormBtn} onClick={() => setReviewModal(null)}>{t('common.cancel')}</button>
                         </div>
                     </div>
                 </div>

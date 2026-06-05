@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getMyArticles, deleteArticle, downloadArticle } from '../../../http/articlesAPI';
+import { useLanguage } from '../../context/useLanguage';
 import styles from './MyArticles.module.css';
 
-const STATUS_MAP = {
-    'pending': { label: 'Очікує розгляду', className: 'statusPending' },
-    'under_review': { label: 'На рецензії', className: 'statusReview' },
-    'accepted': { label: 'Прийнято', className: 'statusAccepted' },
-    'rejected': { label: 'Відхилено', className: 'statusRejected' },
-    'revision_needed': { label: 'Потрібна доопрацювання', className: 'statusRevision' },
+const STATUS_CLASSES = {
+    pending: 'statusPending',
+    under_review: 'statusReview',
+    accepted: 'statusAccepted',
+    rejected: 'statusRejected',
+    revision_needed: 'statusRevision',
 };
 
 function MyArticles() {
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { formatDate, t } = useLanguage();
 
     const loadArticles = async () => {
         try {
@@ -31,27 +33,27 @@ function MyArticles() {
     }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Ви впевнені, що хочете видалити цю статтю?')) return;
+        if (!window.confirm(t('articles.deleteConfirm'))) return;
         try {
             await deleteArticle(id);
             setArticles(articles.filter(a => a.article_id !== id));
-        } catch (error) {
-            alert('Помилка при видаленні статті');
+        } catch {
+            alert(t('articles.deleteError'));
         }
     };
 
     const handleDownload = async (id, fileName) => {
         try {
             await downloadArticle(id, fileName);
-        } catch (error) {
-            alert('Помилка при завантаженні файлу');
+        } catch {
+            alert(t('articles.downloadError'));
         }
     };
 
     if (loading) {
         return (
             <div className={styles.articlesPage}>
-                <div className={styles.loading}>Завантаження...</div>
+                <div className={styles.loading}>{t('common.loading')}</div>
             </div>
         );
     }
@@ -59,60 +61,57 @@ function MyArticles() {
     return (
         <div className={styles.articlesPage}>
             <div className={styles.header}>
-                <h2>Мої статті</h2>
-                <Link to="/submit-article" className={styles.submitLink}>+ Подати статтю</Link>
+                <h2>{t('articles.myTitle')}</h2>
+                <Link to="/submit-article" className={styles.submitLink}>{t('articles.submitNew')}</Link>
             </div>
 
             {articles.length === 0 ? (
                 <div className={styles.empty}>
-                    <h3>У вас ще немає поданих статей</h3>
-                    <p>Подайте свою першу статтю на одну з актуальних конференцій</p>
-                    <Link to="/submit-article" className={styles.submitBtn}>Подати статтю</Link>
+                    <h3>{t('articles.emptyTitle')}</h3>
+                    <p>{t('articles.emptyText')}</p>
+                    <Link to="/submit-article" className={styles.submitBtn}>{t('articles.submitButton')}</Link>
                 </div>
             ) : (
                 <div className={styles.articlesList}>
-                    {articles.map(article => {
-                        const statusInfo = STATUS_MAP[article.status] || STATUS_MAP['pending'];
-                        return (
-                            <div key={article.article_id} className={styles.articleCard}>
-                                <div className={styles.articleTop}>
-                                    <span className={`${styles.statusBadge} ${styles[statusInfo.className]}`}>
-                                        {statusInfo.label}
-                                    </span>
-                                    <span className={styles.date}>
-                                        {new Date(article.submitted_at).toLocaleDateString('uk-UA')}
-                                    </span>
-                                </div>
-                                <h3 className={styles.articleTitle}>{article.title}</h3>
-                                {article.conference_title && (
-                                    <p className={styles.conference}>{article.conference_title}</p>
-                                )}
-                                {article.section && (
-                                    <p className={styles.section}>{article.section}</p>
-                                )}
-                                {article.admin_comment && (
-                                    <div className={styles.adminComment}>
-                                        <strong>Коментар рецензента:</strong>
-                                        <p>{article.admin_comment}</p>
-                                    </div>
-                                )}
-                                <div className={styles.articleActions}>
-                                    <button
-                                        className={styles.downloadBtn}
-                                        onClick={() => handleDownload(article.article_id, article.file_name)}
-                                    >
-                                        Завантажити
-                                    </button>
-                                    <button
-                                        className={styles.deleteBtn}
-                                        onClick={() => handleDelete(article.article_id)}
-                                    >
-                                        Видалити
-                                    </button>
-                                </div>
+                    {articles.map(article => (
+                        <div key={article.article_id} className={styles.articleCard}>
+                            <div className={styles.articleTop}>
+                                <span className={`${styles.statusBadge} ${styles[STATUS_CLASSES[article.status] || STATUS_CLASSES.pending]}`}>
+                                    {t(`status.${article.status}`)}
+                                </span>
+                                <span className={styles.date}>
+                                    {formatDate(article.submitted_at)}
+                                </span>
                             </div>
-                        );
-                    })}
+                            <h3 className={styles.articleTitle}>{article.title}</h3>
+                            {article.conference_title && (
+                                <p className={styles.conference}>{article.conference_title}</p>
+                            )}
+                            {article.section && (
+                                <p className={styles.section}>{article.section}</p>
+                            )}
+                            {article.admin_comment && (
+                                <div className={styles.adminComment}>
+                                    <strong>{t('articles.reviewerComment')}</strong>
+                                    <p>{article.admin_comment}</p>
+                                </div>
+                            )}
+                            <div className={styles.articleActions}>
+                                <button
+                                    className={styles.downloadBtn}
+                                    onClick={() => handleDownload(article.article_id, article.file_name)}
+                                >
+                                    {t('common.download')}
+                                </button>
+                                <button
+                                    className={styles.deleteBtn}
+                                    onClick={() => handleDelete(article.article_id)}
+                                >
+                                    {t('common.delete')}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
         </div>

@@ -2,43 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { submitArticle } from '../../../http/articlesAPI';
 import { fetchNewConferences } from '../../../http/conferenceAPI';
+import { useLanguage } from '../../context/useLanguage';
 import styles from './SubmitArticle.module.css';
-
-const SECTIONS = [
-    'Секція 01. Сільськогосподарські науки',
-    'Секція 02. Ветеринарні науки',
-    'Секція 03. Біологічні науки',
-    'Секція 04. Медичні науки',
-    'Секція 05. Фармацевтичні науки',
-    'Секція 06. Хімічні науки',
-    'Секція 07. Технічні науки',
-    'Секція 08. Фізико-математичні науки',
-    'Секція 09. Інформаційно-комунікаційні технології',
-    'Секція 10. Транспорт та інфраструктура',
-    'Секція 11. Географічні науки',
-    'Секція 12. Геолого-мінералогічні науки',
-    'Секція 13. Архітектура та будівництво',
-    'Секція 14. Астрономія',
-    'Секція 15. Освіта та педагогічні науки',
-    'Секція 16. Психологічні науки',
-    'Секція 17. Соціологічні науки',
-    'Секція 18. Журналістика',
-    'Секція 19. Мистецтвознавство та дизайн',
-    'Секція 20. Історичні науки',
-    'Секція 21. Культурологія',
-    'Секція 22. Література',
-    'Секція 23. Документознавство',
-    'Секція 24. Політичні науки',
-    'Секція 25. Філологічні науки',
-    'Секція 26. Філософські науки',
-    'Секція 27. Економічні науки та маркетинг',
-    'Секція 28. Юридичні науки',
-    'Секція 29. Публічне управління',
-    'Секція 30. Охорона праці та безпека життєдіяльності',
-];
 
 function SubmitArticle() {
     const navigate = useNavigate();
+    const { t } = useLanguage();
+    const sections = t('requirements.sections');
     const [step, setStep] = useState(1);
     const [conferences, setConferences] = useState([]);
     const [error, setError] = useState('');
@@ -64,16 +34,16 @@ function SubmitArticle() {
 
     const nextStep = () => {
         if (step === 1 && !formData.title) {
-            setError('Назва статті обов\'язкова');
+            setError(t('submit.titleRequired'));
             return;
         }
         if (step === 3) {
             if (!articleFile) {
-                setError('Файл статті обов\'язковий');
+                setError(t('submit.articleRequired'));
                 return;
             }
             if (!receiptFile) {
-                setError('Квитанція про оплату обов\'язкова');
+                setError(t('submit.receiptRequired'));
                 return;
             }
         }
@@ -103,8 +73,8 @@ function SubmitArticle() {
 
             await submitArticle(data);
             navigate('/my-articles');
-        } catch (err) {
-            setError(err.response?.data?.message || 'Помилка при відправленні');
+        } catch {
+            setError(t('submit.error'));
             setSubmitting(false);
         }
     };
@@ -113,8 +83,8 @@ function SubmitArticle() {
         <div className={styles.submitPage}>
             <div className={styles.submitCard}>
                 <div className={styles.submitHeader}>
-                    <h2>Подати статтю</h2>
-                    <p>Крок {step} з 4</p>
+                    <h2>{t('submit.title')}</h2>
+                    <p>{t('submit.stepCounter', { step, total: 4 })}</p>
                 </div>
 
                 <div className={styles.progressBar}>
@@ -126,44 +96,44 @@ function SubmitArticle() {
                 <div className={styles.formContent}>
                     {step === 1 && (
                         <div className={styles.stepContent}>
-                            <h3>Основна інформація</h3>
+                            <h3>{t('submit.basicInfo')}</h3>
                             <div className={styles.formGroup}>
-                                <label>Конференція</label>
+                                <label>{t('submit.conference')}</label>
                                 <select name="conference_id" value={formData.conference_id} onChange={handleChange}>
-                                    <option value="">Оберіть конференцію</option>
+                                    <option value="">{t('submit.chooseConference')}</option>
                                     {conferences.map(c => (
                                         <option key={c.conference_id} value={c.conference_id}>{c.title}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Назва статті *</label>
+                                <label>{t('submit.articleTitle')}</label>
                                 <input
                                     type="text"
                                     name="title"
                                     value={formData.title}
                                     onChange={handleChange}
-                                    placeholder="Повна назва вашої статті"
+                                    placeholder={t('submit.articleTitlePlaceholder')}
                                     required
                                 />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Секція конференції</label>
+                                <label>{t('submit.section')}</label>
                                 <select name="section" value={formData.section} onChange={handleChange}>
-                                    <option value="">Оберіть секцію</option>
-                                    {SECTIONS.map((s, i) => (
-                                        <option key={i} value={s}>{s}</option>
+                                    <option value="">{t('submit.chooseSection')}</option>
+                                    {sections.map((section) => (
+                                        <option key={section} value={section}>{section}</option>
                                     ))}
                                 </select>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Індекс УДК</label>
+                                <label>{t('submit.udk')}</label>
                                 <input
                                     type="text"
                                     name="udk_index"
                                     value={formData.udk_index}
                                     onChange={handleChange}
-                                    placeholder="напр. 004.8"
+                                    placeholder={t('submit.udkPlaceholder')}
                                 />
                             </div>
                         </div>
@@ -171,25 +141,25 @@ function SubmitArticle() {
 
                     {step === 2 && (
                         <div className={styles.stepContent}>
-                            <h3>Анотація та ключові слова</h3>
+                            <h3>{t('submit.abstractKeywords')}</h3>
                             <div className={styles.formGroup}>
-                                <label>Анотація</label>
+                                <label>{t('submit.abstract')}</label>
                                 <textarea
                                     name="abstract"
                                     value={formData.abstract}
                                     onChange={handleChange}
-                                    placeholder="2-3 речення опису вашої роботи"
+                                    placeholder={t('submit.abstractPlaceholder')}
                                     rows={5}
                                 />
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Ключові слова (через кому)</label>
+                                <label>{t('submit.keywords')}</label>
                                 <input
                                     type="text"
                                     name="keywords"
                                     value={formData.keywords}
                                     onChange={handleChange}
-                                    placeholder="напр. машинне навчання, нейронні мережі, класифікація"
+                                    placeholder={t('submit.keywordsPlaceholder')}
                                 />
                             </div>
                         </div>
@@ -197,9 +167,9 @@ function SubmitArticle() {
 
                     {step === 3 && (
                         <div className={styles.stepContent}>
-                            <h3>Завантаження файлів</h3>
+                            <h3>{t('submit.files')}</h3>
                             <div className={styles.formGroup}>
-                                <label>Файл статті * (.doc, .docx)</label>
+                                <label>{t('submit.articleFile')}</label>
                                 <div className={styles.fileUpload}>
                                     <input
                                         type="file"
@@ -211,13 +181,13 @@ function SubmitArticle() {
                                         {articleFile ? (
                                             <span className={styles.fileName}>{articleFile.name}</span>
                                         ) : (
-                                            <span>Натисніть для вибору файлу</span>
+                                            <span>{t('submit.chooseFile')}</span>
                                         )}
                                     </label>
                                 </div>
                             </div>
                             <div className={styles.formGroup}>
-                                <label>Квитанція про оплату * (.pdf)</label>
+                                <label>{t('submit.receiptFile')}</label>
                                 <div className={styles.fileUpload}>
                                     <input
                                         type="file"
@@ -229,7 +199,7 @@ function SubmitArticle() {
                                         {receiptFile ? (
                                             <span className={styles.fileName}>{receiptFile.name}</span>
                                         ) : (
-                                            <span>Натисніть для вибору файлу</span>
+                                            <span>{t('submit.chooseFile')}</span>
                                         )}
                                     </label>
                                 </div>
@@ -239,43 +209,43 @@ function SubmitArticle() {
 
                     {step === 4 && (
                         <div className={styles.stepContent}>
-                            <h3>Перевірка та відправлення</h3>
+                            <h3>{t('submit.reviewSend')}</h3>
                             <div className={styles.reviewSection}>
                                 <div className={styles.reviewItem}>
-                                    <span className={styles.reviewLabel}>Назва:</span>
+                                    <span className={styles.reviewLabel}>{t('common.title')}:</span>
                                     <span>{formData.title}</span>
                                 </div>
                                 {formData.section && (
                                     <div className={styles.reviewItem}>
-                                        <span className={styles.reviewLabel}>Секція:</span>
+                                        <span className={styles.reviewLabel}>{t('submit.section')}:</span>
                                         <span>{formData.section}</span>
                                     </div>
                                 )}
                                 {formData.udk_index && (
                                     <div className={styles.reviewItem}>
-                                        <span className={styles.reviewLabel}>УДК:</span>
+                                        <span className={styles.reviewLabel}>{t('submit.udk')}:</span>
                                         <span>{formData.udk_index}</span>
                                     </div>
                                 )}
                                 {formData.abstract && (
                                     <div className={styles.reviewItem}>
-                                        <span className={styles.reviewLabel}>Анотація:</span>
+                                        <span className={styles.reviewLabel}>{t('submit.abstract')}:</span>
                                         <span>{formData.abstract}</span>
                                     </div>
                                 )}
                                 {formData.keywords && (
                                     <div className={styles.reviewItem}>
-                                        <span className={styles.reviewLabel}>Ключові слова:</span>
+                                        <span className={styles.reviewLabel}>{t('submit.keywords')}:</span>
                                         <span>{formData.keywords}</span>
                                     </div>
                                 )}
                                 <div className={styles.reviewItem}>
-                                    <span className={styles.reviewLabel}>Файл:</span>
+                                    <span className={styles.reviewLabel}>{t('submit.file')}</span>
                                     <span>{articleFile?.name}</span>
                                 </div>
                                 {receiptFile && (
                                     <div className={styles.reviewItem}>
-                                        <span className={styles.reviewLabel}>Квитанція:</span>
+                                        <span className={styles.reviewLabel}>{t('submit.receipt')}</span>
                                         <span>{receiptFile.name}</span>
                                     </div>
                                 )}
@@ -286,17 +256,17 @@ function SubmitArticle() {
 
                 <div className={styles.stepActions}>
                     {step > 1 && (
-                        <button className={styles.prevBtn} onClick={prevStep}>Назад</button>
+                        <button className={styles.prevBtn} onClick={prevStep}>{t('common.back')}</button>
                     )}
                     {step < 4 ? (
-                        <button className={styles.nextBtn} onClick={nextStep}>Далі</button>
+                        <button className={styles.nextBtn} onClick={nextStep}>{t('common.next')}</button>
                     ) : (
                         <button
                             className={styles.submitBtn}
                             onClick={handleSubmit}
                             disabled={submitting}
                         >
-                            {submitting ? 'Відправлення...' : 'Відправити'}
+                            {submitting ? t('submit.sending') : t('submit.send')}
                         </button>
                     )}
                 </div>

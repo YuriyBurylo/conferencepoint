@@ -1,23 +1,39 @@
-import styles from './Fees.module.css'
+import styles from './Fees.module.css';
+import Seo from '../Seo/Seo';
+import { buildBreadcrumbJsonLd } from '../../utils/seo';
+import { useLanguage } from '../../context/useLanguage';
+import { localizePath } from '../../i18n/languageDetection';
 
 function Fees() {
+    const { language, t } = useLanguage();
+    const localizedPath = (path) => localizePath(path, language);
+
     return (
         <div className={styles.fees}>
-            <h2>ОПЛАТА ЗА УЧАСТЬ У КОНФЕРЕНЦІЇ</h2>
+            <Seo
+                title={t('seo.feesTitle')}
+                description={t('seo.feesDescription')}
+                path="/fees"
+                jsonLd={buildBreadcrumbJsonLd([
+                    { name: t('nav.home'), path: localizedPath('/') },
+                    { name: t('nav.fees'), path: localizedPath('/fees') }
+                ])}
+            />
+            <h1>{t('seo.feesTitle').toUpperCase()}</h1>
             <div className={styles.container}>
-                <p className={styles.payment}>Організаційний внесок за участь у конференції становить <strong>200 грн.</strong></p>
-                <p className={styles.payment}>Cплата організаційного внеску здійснюється шляхом переказу коштів на банківський рахунок.</p>
-            </div> 
-            <h3>РЕКВІЗИТИ ДЛЯ ОПЛАТИ:</h3>
+                <p className={styles.payment}>{t('fees.amount')} <strong>{t('fees.amountValue')}</strong></p>
+                <p className={styles.payment}>{t('fees.transfer')}</p>
+            </div>
+            <h3>{t('fees.detailsTitle')}</h3>
             <div className={styles.container}>
-                <p><strong>Назва банку:</strong> АТ КБ «ПриватБанк»</p>
-                <p><strong>Найменування отримувача:</strong> ФОП Бурило Юрій Павлович</p>
-                <p><strong>Код отримувача (ЄДРПОУ):</strong> 2949904670</p>
-                <p><strong>Рахунок IBAN:</strong> UA593052990000026009026201252</p>
-                <p><strong>У призначенні платежу треба зазначити:</strong> «Оргвнесок за публікацію тез доповіді, прізвище та ініціали автора».</p>
-            </div> 
+                <p><strong>{t('fees.bank')}</strong> {t('fees.bankValue')}</p>
+                <p><strong>{t('fees.recipient')}</strong> {t('fees.recipientValue')}</p>
+                <p><strong>{t('fees.recipientCode')}</strong> 2949904670</p>
+                <p><strong>IBAN:</strong> UA593052990000026009026201252</p>
+                <p><strong>{t('fees.paymentPurpose')}</strong> {t('fees.paymentPurposeValue')}</p>
+            </div>
         </div>
-    )
+    );
 }
 
 export default Fees;

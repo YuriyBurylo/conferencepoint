@@ -1,0 +1,70 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-conferencepoint}
+      POSTGRES_USER: ${POSTGRES_USER:-conferencepoint}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-conferencepoint_dev_password}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./server/database.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+      args:
+        VITE_API_BASE_URL: /
+        VITE_SITE_URL: ${VITE_SITE_URL:-http://localhost:8080}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-conferencepoint}
+      DB_USER: ${DB_USER:-conferencepoint}
+      DB_PASSWORD: ${DB_PASSWORD:-conferencepoint_dev_password}
+      JWT_SECRET: ${JWT_SECRET:-local_docker_jwt_secret_please_change_64_chars_1234567890}
+      CLIENT_DIST_DIR: /app/client-dist
+      CLIENT_ORIGINS: ${CLIENT_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080}
+      SITE_URL: ${SITE_URL:-http://localhost:8080}
+      COOKIE_SAME_SITE: ${COOKIE_SAME_SITE:-lax}
+    depends_on:
+      db:
+        condition: service_healthy
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://127.0.0.1:3000/robots.txt', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  frontend:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+      args:
+        VITE_API_BASE_URL: /
+        VITE_SITE_URL: ${VITE_SITE_URL:-http://localhost:8080}
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  db-data:

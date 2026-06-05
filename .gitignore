@@ -3,6 +3,7 @@ node_modules/
 
 # Environment
 .env
+.env.docker
 .env.local
 .env.*.local
 
@@ -27,3 +28,6 @@ npm-debug.log*
 
 # Static uploads (PDF files)
 server/static/*.pdf
+
+# Local/private asset dumps
+client/src/assets/Изображения/

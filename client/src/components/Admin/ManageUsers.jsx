@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { getAllUsers, updateUserRole, deleteUser } from '../../../http/authAPI';
+import { useLanguage } from '../../context/useLanguage';
 import styles from './Admin.module.css';
 
 function ManageUsers() {
+    const { formatDate, t } = useLanguage();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -27,22 +29,22 @@ function ManageUsers() {
     const handleRoleChange = async (userId, newRole) => {
         try {
             await updateUserRole(userId, newRole);
-            setSuccess('Роль оновлено');
+            setSuccess(t('admin.roleUpdated'));
             loadUsers();
             setTimeout(() => setSuccess(''), 3000);
         } catch (err) {
-            setError(err.response?.data?.message || 'Помилка при оновленні ролі');
+            setError(err.response?.data?.message || t('admin.roleUpdateError'));
         }
     };
 
     const handleDelete = async (userId) => {
-        if (!window.confirm('Ви впевнені, що хочете видалити цього користувача? Всі його статті також будуть видалені.')) return;
+        if (!window.confirm(t('admin.deleteUserConfirm'))) return;
         try {
             await deleteUser(userId);
-            setSuccess('Користувача видалено');
+            setSuccess(t('admin.userDeleted'));
             loadUsers();
         } catch (err) {
-            setError(err.response?.data?.message || 'Помилка при видаленні');
+            setError(err.response?.data?.message || t('admin.deleteError'));
         }
     };
 
@@ -52,12 +54,12 @@ function ManageUsers() {
     );
 
     if (loading) {
-        return <div className={styles.adminPage}><div className={styles.loading}>Завантаження...</div></div>;
+        return <div className={styles.adminPage}><div className={styles.loading}>{t('common.loading')}</div></div>;
     }
 
     return (
         <div className={styles.adminPage}>
-            <h2 className={styles.pageTitle}>Управління користувачами</h2>
+            <h2 className={styles.pageTitle}>{t('admin.manageUsers')}</h2>
 
             {error && <div className={styles.errorMsg}>{error}</div>}
             {success && <div className={styles.successMsg}>{success}</div>}
@@ -65,12 +67,12 @@ function ManageUsers() {
             <div className={styles.toolbar}>
                 <input
                     type="text"
-                    placeholder="Пошук за ім'ям або email..."
+                    placeholder={t('admin.searchUsers')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className={styles.searchInput}
                 />
-                <span className={styles.count}>Всього: {filteredUsers.length}</span>
+                <span className={styles.count}>{t('common.total', { count: filteredUsers.length })}</span>
             </div>
 
             <div className={styles.tableContainer}>
@@ -78,12 +80,12 @@ function ManageUsers() {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Ім'я</th>
+                            <th>{t('admin.name')}</th>
                             <th>Email</th>
-                            <th>Установа</th>
-                            <th>Роль</th>
-                            <th>Реєстрація</th>
-                            <th>Дії</th>
+                            <th>{t('admin.institution')}</th>
+                            <th>{t('admin.role')}</th>
+                            <th>{t('admin.registration')}</th>
+                            <th>{t('common.actions')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,23 +106,23 @@ function ManageUsers() {
                                         onChange={(e) => handleRoleChange(user.user_id, e.target.value)}
                                         className={`${styles.roleSelect} ${user.role === 'admin' ? styles.roleAdmin : ''}`}
                                     >
-                                        <option value="user">Користувач</option>
-                                        <option value="admin">Адміністратор</option>
+                                        <option value="user">{t('profile.user')}</option>
+                                        <option value="admin">{t('profile.administrator')}</option>
                                     </select>
                                 </td>
-                                <td>{new Date(user.created_at).toLocaleDateString('uk-UA')}</td>
+                                <td>{formatDate(user.created_at)}</td>
                                 <td>
                                     <button
                                         className={styles.deleteTableBtn}
                                         onClick={() => handleDelete(user.user_id)}
                                     >
-                                        Видалити
+                                        {t('common.delete')}
                                     </button>
                                 </td>
                             </tr>
                         ))}
                         {filteredUsers.length === 0 && (
-                            <tr><td colSpan="7" className={styles.emptyRow}>Користувачів не знайдено</td></tr>
+                            <tr><td colSpan="7" className={styles.emptyRow}>{t('admin.noUsers')}</td></tr>
                         )}
                     </tbody>
                 </table>

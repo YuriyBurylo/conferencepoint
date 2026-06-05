@@ -1,5 +1,7 @@
 .container {
     min-height: 87vh;
+    width: 100%;
+    min-width: 0;
     place-items: center;
     place-content: center;
     padding: 0 1rem;
