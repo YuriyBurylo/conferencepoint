@@ -1,0 +1,38 @@
+.promo {
+    width: 100%;
+    padding: clamp(14px, 2.5vw, 28px) 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.link {
+    display: block;
+    width: min(100%, 700px);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.link:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-floating);
+}
+
+.link:focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 4px;
+}
+
+.image {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 700 / 308;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .link {
+        transition: none;
+    }
+}
