@@ -9,7 +9,6 @@ function Root() {
     return (
         <div className={styles.container}>
             <Header/>
-            <ScienceChumsPromo/>
             <main className={styles.main}>
                 <Outlet/>
             </main>
