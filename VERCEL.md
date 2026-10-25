@@ -6,7 +6,8 @@ Use Node.js 24. Docker remains available for local development.
 
 ## Connected deployment
 
-- Application: https://conferencepoint.vercel.app
+- Custom domain: https://conferencepoint.online
+- Vercel URL: https://conferencepoint.vercel.app
 - Vercel team/project: `science-chums/conferencepoint`
 - GitHub production branch: `develop` (pushes deploy automatically)
 - PostgreSQL: Neon project `small-dust-65820540`, Frankfurt, separate production/preview branches
@@ -20,22 +21,27 @@ article submission, private download, and ZIP export passed. The temporary artic
 was removed; its private storage verification object is recorded in the ignored
 `.vercel/upload-verification.json` file.
 
-The live HOSTIQ data still needs a fresh export before the domain cutover. Restore
-that export into a new empty database, apply migrations, compare counts, and update
-the deployment's connection strings. Do not overwrite the test import blindly.
-The restore helper deliberately refuses a populated destination.
+The live HOSTIQ data still needs a fresh export. The user requested the domain
+switch on October 25, 2026 while that export was unavailable. Restore any later
+HOSTIQ export into an isolated empty database, apply migrations, and reconcile it
+with Vercel, preserving submissions and accounts created after the DNS switch.
+Do not replace the current database blindly. The restore helper deliberately
+refuses a populated destination.
 
 Both custom domains are assigned in Vercel, with `www` redirecting to the apex.
-Authoritative DNS has not been changed. After the final data check, apply the
-records currently requested by this project's Vercel Domains page:
+The following records were saved in HOSTIQ's authoritative DNS management on
+October 25, 2026. Public DNS propagation and Vercel HTTPS validation were pending
+immediately after the change:
 
 | Type | Name | Value |
 | --- | --- | --- |
 | A | `@` | `216.198.79.1` |
 | CNAME | `www` | `0e7dee078ec5d932.vercel-dns-017.com.` |
 
-Recheck the Vercel instructions before applying DNS, preserve mail/TXT records,
-and verify HTTPS and the application before shutting down HOSTIQ.
+Mail and TXT records were preserved. The original zone is saved locally in the
+ignored `.vercel/hostiq-dns-before-cutover.json` file. Email still points at the
+HOSTIQ VPS. Verify HTTPS and the application, reconcile live data, and resolve any
+remaining email hosting dependency before shutting down that VPS.
 
 ## Project settings
 
