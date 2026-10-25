@@ -4,6 +4,39 @@ The repository root deploys the Vite frontend and Express API as one Vercel proj
 `vercel.json` defines installation, the build, API routing, SPA fallback, and dynamic SEO routes.
 Use Node.js 24. Docker remains available for local development.
 
+## Connected deployment
+
+- Application: https://conferencepoint.vercel.app
+- Vercel team/project: `science-chums/conferencepoint`
+- GitHub production branch: `develop` (pushes deploy automatically)
+- PostgreSQL: Neon project `small-dust-65820540`, Frankfurt, separate production/preview branches
+- Files: private Vercel Blob stores `conferencepoint-production` and `conferencepoint-preview`
+- Credentials are stored as Vercel Secrets and ignored `.env.vercel.*.local` files.
+
+The initial import uses the local June 1, 2026 backup: 2 users, 1 article, 1 upcoming
+conference, 7 archived conferences, and 10 files. All 10 files were copied to private
+Blob storage and downloaded with matching SHA-256 checksums. A 6 MB direct upload,
+article submission, private download, and ZIP export passed. The temporary article
+was removed; its private storage verification object is recorded in the ignored
+`.vercel/upload-verification.json` file.
+
+The live HOSTIQ data still needs a fresh export before the domain cutover. Restore
+that export into a new empty database, apply migrations, compare counts, and update
+the deployment's connection strings. Do not overwrite the test import blindly.
+The restore helper deliberately refuses a populated destination.
+
+Both custom domains are assigned in Vercel, with `www` redirecting to the apex.
+Authoritative DNS has not been changed. After the final data check, apply the
+records currently requested by this project's Vercel Domains page:
+
+| Type | Name | Value |
+| --- | --- | --- |
+| A | `@` | `216.198.79.1` |
+| CNAME | `www` | `0e7dee078ec5d932.vercel-dns-017.com.` |
+
+Recheck the Vercel instructions before applying DNS, preserve mail/TXT records,
+and verify HTTPS and the application before shutting down HOSTIQ.
+
 ## Project settings
 
 - Git repository: `YuriyBurylo/conferencepoint`
