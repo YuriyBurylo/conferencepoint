@@ -9,7 +9,7 @@ Use Node.js 24. Docker remains available for local development.
 - Git repository: `YuriyBurylo/conferencepoint`
 - Root Directory: repository root (`./`)
 - Application Preset: Other
-- Install: `npm ci --prefix server && npm ci --prefix client`
+- Install: `npm ci --omit=dev --prefix server && npm ci --include=dev --prefix client`
 - Build: `npm run build --prefix client`
 - Output: `client/dist`
 - Function region: Frankfurt (`fra1`), near the PostgreSQL database
