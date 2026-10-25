@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "migrate": "node scripts/migrate.js",
+    "admin:reset-password": "node scripts/reset-admin-password.js",
     "test": "node test_security_utils.js && node test_auth_security.js && node test_auth_password_reset.js && node test_auth_schema_seed.js && node test_article_conference_schema.js && node test_route_order.js && node test_download_all_articles.js && node test_archive_visibility.js && node test_new_conference_update.js && node test_seo_utils.js"
   },
   "dependencies": {

@@ -24,6 +24,8 @@ assert.match(compose, /postgres:16-alpine/, 'db must use a pinned Postgres image
 assert.match(compose, /server\/database\.sql/, 'db must initialize from database.sql');
 assert.match(compose, /condition: service_healthy/, 'backend must wait for healthy database');
 assert.match(compose, /8080:80/, 'frontend must publish port 8080');
+assert.match(compose, /CLIENT_ORIGINS:[^\n]*https:\/\/conferencepoint\.online/, 'backend must allow the production origin');
+assert.match(compose, /SITE_URL:[^\n]*https:\/\/conferencepoint\.online/, 'backend must default to the production site URL');
 
 const backendDockerfile = read('server/Dockerfile');
 assert.match(backendDockerfile, /FROM node:24-alpine AS client-build/, 'backend image must build frontend assets for SEO injection');

@@ -26,3 +26,9 @@ docker compose --env-file .env.docker up --build
 ```
 
 For real production, replace `JWT_SECRET`, database password, `SITE_URL`, and run behind HTTPS.
+
+Reset the admin password:
+
+```bash
+docker compose exec -e ADMIN_PASSWORD='new-password-123' backend npm run admin:reset-password -- --email burylojunior@gmail.com
+```
