@@ -6,7 +6,7 @@ Use Node.js 24. Docker remains available for local development.
 
 ## Connected deployment
 
-- Custom domain: https://conferencepoint.online
+- Live custom domain: https://conferencepoint.online (HOSTIQ; DNS rollback requested October 25, 2026)
 - Vercel URL: https://conferencepoint.vercel.app
 - Vercel team/project: `science-chums/conferencepoint`
 - GitHub production branch: `develop` (pushes deploy automatically)
@@ -21,27 +21,29 @@ article submission, private download, and ZIP export passed. The temporary artic
 was removed; its private storage verification object is recorded in the ignored
 `.vercel/upload-verification.json` file.
 
-The live HOSTIQ data still needs a fresh export. The user requested the domain
-switch on October 25, 2026 while that export was unavailable. Restore any later
-HOSTIQ export into an isolated empty database, apply migrations, and reconcile it
-with Vercel, preserving submissions and accounts created after the DNS switch.
+HOSTIQ remains the live site. The user requested reverting the domain to HOSTIQ
+on October 25, 2026, and the original website DNS records were restored. The
+Vercel copy remains available at its vercel.app URL with the June 1 backup.
+Any future migration still needs a fresh HOSTIQ export. Restore it into an
+isolated empty database, apply migrations, and reconcile it with Vercel,
+preserving any submissions and accounts created during the brief DNS cutover.
 Do not replace the current database blindly. The restore helper deliberately
 refuses a populated destination.
 
-Both custom domains are assigned in Vercel, with `www` redirecting to the apex.
-The following records were saved in HOSTIQ's authoritative DNS management on
-October 25, 2026. Public DNS propagation and Vercel HTTPS validation were pending
-immediately after the change:
+The custom domains remain assigned in Vercel, but their DNS no longer targets
+Vercel. The following original records were saved in HOSTIQ's authoritative DNS
+management on October 25, 2026. Public resolver caches may take up to 48 hours
+to reflect the rollback. The HOSTIQ server responded successfully over HTTPS:
 
 | Type | Name | Value |
 | --- | --- | --- |
-| A | `@` | `216.198.79.1` |
-| CNAME | `www` | `0e7dee078ec5d932.vercel-dns-017.com.` |
+| A | `@` | `45.94.158.76` |
+| CNAME | `www` | `conferencepoint.online` |
 
-Mail and TXT records were preserved. The original zone is saved locally in the
-ignored `.vercel/hostiq-dns-before-cutover.json` file. Email still points at the
-HOSTIQ VPS. Verify HTTPS and the application, reconcile live data, and resolve any
-remaining email hosting dependency before shutting down that VPS.
+Mail and TXT records were preserved. The original zone and rollback confirmation
+are saved locally in the ignored `.vercel/hostiq-dns-before-cutover.json` and
+`.vercel/hostiq-dns-after-rollback.json` files. The HOSTIQ VPS still hosts the live
+website and email and must remain active.
 
 ## Project settings
 
