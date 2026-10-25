@@ -174,6 +174,13 @@ app.use(fileUpload({
   responseOnLimit: 'Файл перевищує дозволений розмір'
 }));
 app.use('/api', router);
+app.use('/api', (_req, res) => {
+  res.status(404).json({ message: 'API route not found' });
+});
+app.get('/{*path}', (_req, res, next) => {
+  if (!fs.existsSync(CLIENT_INDEX_PATH)) return next();
+  return res.sendFile(CLIENT_INDEX_PATH);
+});
 
 
 const start = async () => {
@@ -187,4 +194,8 @@ const start = async () => {
   }
 };
 
-start();
+if (require.main === module) {
+  start();
+}
+
+module.exports = app;

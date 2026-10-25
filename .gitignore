@@ -6,6 +6,8 @@ node_modules/
 .env.docker
 .env.local
 .env.*.local
+.vercel/
+backup*.sql
 
 # Build
 dist/

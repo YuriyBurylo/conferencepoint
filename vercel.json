@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "regions": ["fra1"],
+  "installCommand": "npm ci --prefix server && npm ci --prefix client",
+  "buildCommand": "npm run build --prefix client",
+  "outputDirectory": "client/dist",
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "client/dist/**",
+      "maxDuration": 300
+    }
+  },
+  "routes": [
+    { "src": "/api(?:/.*)?", "dest": "/api/index.js" },
+    { "src": "/(?:robots\\.txt|sitemap\\.xml)", "dest": "/api/index.js" },
+    { "src": "/(?:newconferences|pastconferences)(?:/[0-9]+)?/?", "dest": "/api/index.js" },
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/api/index.js" }
+  ]
+}

@@ -1,4 +1,5 @@
 const db = require('../db');
+const { hasUpload, readUpload, sendFile } = require('../utils/files');
 const { parsePositiveInteger, validatePdfFile, validateText } = require('../utils/security');
 
 const handleError = (res, error, fallbackMessage) => {
@@ -29,14 +30,14 @@ class ArchiveConferencesController {
         try {
             const { conference_status, title, venue, country, timing, participants } = normalizeConferencePayload(req.body);
 
-            if (!req.files || !req.files.textpdf) {
+            if (!hasUpload(req, 'textpdf')) {
                 return res.status(400).json({ message: 'Файл матеріалів обов\'язковий' });
             }
 
-            const textpdf = validatePdfFile(req.files.textpdf);
+            const textpdf = await readUpload(req, 'textpdf', validatePdfFile);
             const conference = await db.query(
-                'INSERT INTO archive_conferences (conference_status, title, venue, country, timing, participants, textpdf, is_published) VALUES ($1, $2, $3, $4, $5, $6, $7, true) RETURNING conference_id, conference_status, title, venue, country, timing, participants, is_published',
-                [conference_status, title, venue, country, timing, participants, textpdf.data]
+                'INSERT INTO archive_conferences (conference_status, title, venue, country, timing, participants, textpdf, textpdf_blob, is_published) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true) RETURNING conference_id, conference_status, title, venue, country, timing, participants, is_published',
+                [conference_status, title, venue, country, timing, participants, textpdf.blobPathname ? null : textpdf.data, textpdf.blobPathname || null]
             );
             res.json(conference.rows[0]);
         } catch (error) {
@@ -78,15 +79,15 @@ class ArchiveConferencesController {
     async getConferenceMaterials(req, res) {
         try {
             const { id } = req.params;
-            const result = await db.query('SELECT textpdf FROM archive_conferences WHERE conference_id = $1 AND is_published = true', [id]);
+            const result = await db.query('SELECT textpdf, textpdf_blob FROM archive_conferences WHERE conference_id = $1 AND is_published = true', [id]);
             const conference = result.rows[0];
 
-            if (!conference || !conference.textpdf) {
+            if (!conference || (!conference.textpdf && !conference.textpdf_blob)) {
                 return res.status(404).json({ message: 'PDF не знайдено' });
             }
 
             res.setHeader('Content-Type', 'application/pdf');
-            res.send(conference.textpdf);
+            await sendFile(res, conference.textpdf, conference.textpdf_blob);
         } catch (error) {
             return handleError(res, error, 'Помилка при отриманні матеріалів');
         }
@@ -96,16 +97,16 @@ class ArchiveConferencesController {
         try {
             const conference_id = parsePositiveInteger(req.body.conference_id, 'conference_id', { required: true });
             const { conference_status, title, venue, country, timing, participants } = normalizeConferencePayload(req.body);
-            const hasMaterials = req.files && req.files.textpdf;
-            const textpdf = hasMaterials ? validatePdfFile(req.files.textpdf) : null;
+            const hasMaterials = hasUpload(req, 'textpdf');
+            const textpdf = hasMaterials ? await readUpload(req, 'textpdf', validatePdfFile) : null;
             const existing = await db.query('SELECT is_published FROM archive_conferences WHERE conference_id = $1', [conference_id]);
             if (!existing.rows[0]) {
                 return res.status(404).json({ message: 'Конференцію не знайдено' });
             }
             const conference = hasMaterials
                 ? await db.query(
-                    'UPDATE archive_conferences SET conference_status = $2, title = $3, venue = $4, country = $5, timing = $6, participants = $7, textpdf = $8, is_published = true WHERE conference_id = $1 RETURNING conference_id, conference_status, title, venue, country, timing, participants, is_published',
-                    [conference_id, conference_status, title, venue, country, timing, participants, textpdf.data]
+                    'UPDATE archive_conferences SET conference_status = $2, title = $3, venue = $4, country = $5, timing = $6, participants = $7, textpdf = $8, textpdf_blob = $9, is_published = true WHERE conference_id = $1 RETURNING conference_id, conference_status, title, venue, country, timing, participants, is_published',
+                    [conference_id, conference_status, title, venue, country, timing, participants, textpdf.blobPathname ? null : textpdf.data, textpdf.blobPathname || null]
                 )
                 : await db.query(
                     'UPDATE archive_conferences SET conference_status = $2, title = $3, venue = $4, country = $5, timing = $6, participants = $7 WHERE conference_id = $1 RETURNING conference_id, conference_status, title, venue, country, timing, participants, is_published',

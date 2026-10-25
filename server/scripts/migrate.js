@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+// Migrations need a direct connection rather than a transaction pooler.
+if (process.env.DATABASE_URL_UNPOOLED) process.env.DATABASE_URL = process.env.DATABASE_URL_UNPOOLED;
 const db = require('../db');
 
 const migrationsDir = path.resolve(__dirname, '../migrations');

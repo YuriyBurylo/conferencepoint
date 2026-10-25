@@ -12,6 +12,7 @@
     "test:seo": "node src/utils/seo.test.js && node scripts/prerender-seo.test.mjs"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.2",
     "axios": "^1.13.5",
     "eslint": "^9.39.3",
     "react": "^19.2.0",

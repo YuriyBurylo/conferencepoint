@@ -166,6 +166,13 @@ const createCorsOptions = () => {
         'http://localhost:5173,https://conferencepoint.online'
     );
 
+    // Allow this project's deployment URLs without trusting other Vercel sites.
+    if (process.env.VERCEL === '1') {
+        for (const hostname of [process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL, process.env.VERCEL_PROJECT_PRODUCTION_URL]) {
+            if (hostname) origins.add(`https://${hostname}`);
+        }
+    }
+
     return {
         credentials: true,
         origin(origin, callback) {

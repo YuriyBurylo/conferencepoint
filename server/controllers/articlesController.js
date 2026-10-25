@@ -1,4 +1,5 @@
 const db = require('../db');
+const { archiveFile, hasUpload, readUpload, sendFile } = require('../utils/files');
 const archiverModule = require('archiver');
 const {
     RequestValidationError,
@@ -54,18 +55,18 @@ class ArticlesController {
             const normalizedUdk = validateText(udk_index, 'УДК', { max: 128 });
             const normalizedAbstract = validateText(abstract, 'Анотація', { max: 5000 });
 
-            if (!req.files || !req.files.article) {
+            if (!hasUpload(req, 'article')) {
                 return res.status(400).json({ message: 'Файл статті обов\'язковий' });
             }
 
-            const article = validateArticleFile(req.files.article);
-            const receipt = req.files.receipt ? validatePdfFile(req.files.receipt) : null;
+            const article = await readUpload(req, 'article', validateArticleFile);
+            const receipt = hasUpload(req, 'receipt') ? await readUpload(req, 'receipt', validatePdfFile) : null;
 
             const keywordsArray = normalizeKeywords(keywords);
 
             const result = await db.query(
-                `INSERT INTO articles (user_id, conference_id, new_conference_id, archive_conference_id, title, section, udk_index, abstract, keywords, file_data, file_name, payment_receipt, receipt_name)
-                 VALUES ($1, $2, $2, NULL, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+                `INSERT INTO articles (user_id, conference_id, new_conference_id, archive_conference_id, title, section, udk_index, abstract, keywords, file_data, file_name, payment_receipt, receipt_name, file_blob, receipt_blob)
+                 VALUES ($1, $2, $2, NULL, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
                  RETURNING article_id, user_id, conference_id, new_conference_id, archive_conference_id, title, section, udk_index, abstract, keywords, file_name, status, receipt_name, submitted_at`,
                 [
                     user_id,
@@ -75,10 +76,12 @@ class ArticlesController {
                     normalizedUdk,
                     normalizedAbstract,
                     keywordsArray,
-                    article.data,
+                    article.blobPathname ? null : article.data,
                     article.name,
-                    receipt ? receipt.data : null,
-                    receipt ? receipt.name : null
+                    receipt && !receipt.blobPathname ? receipt.data : null,
+                    receipt ? receipt.name : null,
+                    article.blobPathname || null,
+                    receipt?.blobPathname || null
                 ]
             );
 
@@ -140,7 +143,7 @@ class ArticlesController {
         try {
             const { id } = req.params;
             const result = await db.query(
-                'SELECT file_data, file_name, user_id FROM articles WHERE article_id = $1',
+                'SELECT file_data, file_blob, file_name, user_id FROM articles WHERE article_id = $1',
                 [id]
             );
 
@@ -156,7 +159,7 @@ class ArticlesController {
             const fileName = sanitizeFileName(article.file_name, `article_${id}`);
             res.setHeader('Content-Type', 'application/octet-stream');
             res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`);
-            res.send(article.file_data);
+            await sendFile(res, article.file_data, article.file_blob);
         } catch (error) {
             return handleError(res, error, 'Помилка при завантаженні статті');
         }
@@ -167,11 +170,11 @@ class ArticlesController {
         try {
             const { id } = req.params;
             const result = await db.query(
-                'SELECT payment_receipt, receipt_name FROM articles WHERE article_id = $1',
+                'SELECT payment_receipt, receipt_blob, receipt_name FROM articles WHERE article_id = $1',
                 [id]
             );
 
-            if (!result.rows[0] || !result.rows[0].payment_receipt) {
+            if (!result.rows[0] || (!result.rows[0].payment_receipt && !result.rows[0].receipt_blob)) {
                 return res.status(404).json({ message: 'Квитанцію не знайдено' });
             }
 
@@ -179,7 +182,7 @@ class ArticlesController {
             const fileName = sanitizeFileName(article.receipt_name, `receipt_${id}.pdf`);
             res.setHeader('Content-Type', 'application/octet-stream');
             res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(fileName)}`);
-            res.send(article.payment_receipt);
+            await sendFile(res, article.payment_receipt, article.receipt_blob);
         } catch (error) {
             return handleError(res, error, 'Помилка при завантаженні квитанції');
         }
@@ -207,13 +210,13 @@ class ArticlesController {
             const keywordsArray = normalizeKeywords(keywords);
 
             let query, params;
-            if (req.files && req.files.article) {
-                const article = validateArticleFile(req.files.article);
+            if (hasUpload(req, 'article')) {
+                const article = await readUpload(req, 'article', validateArticleFile);
                 query = `UPDATE articles SET title = COALESCE($1, title), section = COALESCE($2, section), udk_index = COALESCE($3, udk_index),
-                         abstract = COALESCE($4, abstract), keywords = COALESCE($5, keywords), file_data = $6, file_name = $7,
+                         abstract = COALESCE($4, abstract), keywords = COALESCE($5, keywords), file_data = $6, file_name = $7, file_blob = $9,
                          status = 'pending', updated_at = NOW() WHERE article_id = $8
                          RETURNING article_id, title, section, udk_index, abstract, keywords, file_name, status, submitted_at, updated_at`;
-                params = [normalizedTitle, normalizedSection, normalizedUdk, normalizedAbstract, keywordsArray, article.data, article.name, id];
+                params = [normalizedTitle, normalizedSection, normalizedUdk, normalizedAbstract, keywordsArray, article.blobPathname ? null : article.data, article.name, id, article.blobPathname || null];
             } else {
                 query = `UPDATE articles SET title = COALESCE($1, title), section = COALESCE($2, section), udk_index = COALESCE($3, udk_index),
                          abstract = COALESCE($4, abstract), keywords = COALESCE($5, keywords),
@@ -337,7 +340,7 @@ class ArticlesController {
         try {
             const { status, conference_id, author, conference_date, submission_date, has_receipt } = req.query;
             const conferenceId = parsePositiveInteger(conference_id, 'conference_id');
-            let query = `SELECT a.article_id, a.file_data, a.file_name, u.full_name as author_name
+            let query = `SELECT a.article_id, a.file_data, a.file_blob, a.file_name, u.full_name as author_name
                          FROM articles a
                          LEFT JOIN users u ON a.user_id = u.user_id
                          ${conferenceJoins}`;
@@ -401,7 +404,7 @@ class ArticlesController {
                     fileName = `${base}_${row.article_id}${ext}`;
                 }
                 usedNames.add(fileName);
-                archive.append(row.file_data, { name: fileName });
+                archive.append(await archiveFile(row), { name: fileName });
             }
 
             await archive.finalize();

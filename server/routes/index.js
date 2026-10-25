@@ -11,5 +11,6 @@ router.use('/nextconference', nextConferenceRouter);
 router.use('/newconferences', newConferencesRouter);
 router.use('/pastconferences', archiveConferencesRouter);
 router.use('/articles', articlesRouter);
+router.use('/uploads', require('./uploadsRouter'));
 
 module.exports = router;

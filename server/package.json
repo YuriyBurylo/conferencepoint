@@ -8,11 +8,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
+    "start": "node index.js",
     "migrate": "node scripts/migrate.js",
+    "migrate:files": "node scripts/migrate-files-to-blob.js",
     "admin:reset-password": "node scripts/reset-admin-password.js",
-    "test": "node test_security_utils.js && node test_auth_security.js && node test_auth_password_reset.js && node test_auth_schema_seed.js && node test_article_conference_schema.js && node test_route_order.js && node test_download_all_articles.js && node test_archive_visibility.js && node test_new_conference_update.js && node test_seo_utils.js"
+    "test": "node test_security_utils.js && node test_auth_security.js && node test_auth_password_reset.js && node test_auth_schema_seed.js && node test_article_conference_schema.js && node test_route_order.js && node test_download_all_articles.js && node test_archive_visibility.js && node test_new_conference_update.js && node test_seo_utils.js && node test_blob_storage.js"
   },
   "dependencies": {
+    "@vercel/blob": "^2.8.2",
+    "@vercel/functions": "^3.10.3",
     "archiver": "^8.0.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

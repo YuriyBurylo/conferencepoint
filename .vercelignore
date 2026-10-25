@@ -1,0 +1,9 @@
+.git
+.agents
+.vercel
+**/node_modules
+**/.env
+**/.env.*
+**/*.log
+backup.sql
+**/dist
