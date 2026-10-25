@@ -1,6 +1,5 @@
 const db = require('../db');
 const { archiveFile, hasUpload, readUpload, sendFile } = require('../utils/files');
-const archiverModule = require('archiver');
 const {
     RequestValidationError,
     parsePositiveInteger,
@@ -12,7 +11,8 @@ const {
 
 const DOWNLOAD_ALL_LIMIT = 500;
 
-const createZipArchive = () => {
+const createZipArchive = async () => {
+    const archiverModule = await import('archiver');
     if (typeof archiverModule === 'function') {
         return archiverModule('zip', { zlib: { level: 5 } });
     }
@@ -387,7 +387,7 @@ class ArticlesController {
                 return res.status(404).json({ message: 'Немає статей для завантаження' });
             }
 
-            const archive = createZipArchive();
+            const archive = await createZipArchive();
             archive.on('warning', (error) => console.warn('ZIP archive warning:', error.message));
 
             res.setHeader('Content-Type', 'application/zip');
